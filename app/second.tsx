@@ -1,42 +1,22 @@
 import { useRouter } from 'expo-router';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 
 export default function Second() {
   const router = useRouter();
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Second Screen</Text>
+    <View className="flex-1 items-center justify-center p-5 bg-gray-100">
+      <Text className="text-2xl font-bold mb-5 text-gray-900">
+        Second Screen
+      </Text>
       <TouchableOpacity
-        style={styles.button}
+        className="mt-5 px-4 py-3 bg-green-500 rounded-lg"
         onPress={() => router.back()}>
-        <Text style={styles.buttonText}>Go Back to Home</Text>
+        <Text className="text-white text-base font-semibold">
+          Go Back to Home
+        </Text>
       </TouchableOpacity>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  button: {
-    marginTop: 20,
-    padding: 10,
-    backgroundColor: '#007AFF',
-    borderRadius: 8,
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-  },
-});
 
