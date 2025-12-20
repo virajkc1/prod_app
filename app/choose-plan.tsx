@@ -1,10 +1,17 @@
 import { useState } from "react";
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
 import { useRouter } from "expo-router";
+import Button from "@/components/onboarding/Button";
 
 /**
  * Choose Plan Screen
- * 
+ *
  * Route: "/choose-plan"
  * - Allows user to select their productivity plan
  * - Has back button to return to homepage
@@ -37,20 +44,20 @@ export default function ChoosePlanScreen() {
 
   const handleContinue = () => {
     if (selectedPlan) {
-      console.log("Selected plan:", selectedPlan);
       // TODO: Navigate to next screen or save selection
+      router.push("/create-account");
     }
   };
 
   return (
     <View style={styles.container}>
-      <ScrollView 
+      <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
         {/* Back Button */}
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.backButton}
           onPress={() => router.back()}
           activeOpacity={0.7}
@@ -59,9 +66,7 @@ export default function ChoosePlanScreen() {
         </TouchableOpacity>
 
         {/* Header */}
-        <Text style={styles.title}>
-          Choose your Plan
-        </Text>
+        <Text style={styles.title}>Choose your Plan</Text>
 
         {/* Subtitle */}
         <Text style={styles.subtitle}>
@@ -72,7 +77,7 @@ export default function ChoosePlanScreen() {
         <View style={styles.plansContainer}>
           {plans.map((plan) => {
             const isSelected = selectedPlan === plan.id;
-            
+
             return (
               <TouchableOpacity
                 key={plan.id}
@@ -80,54 +85,39 @@ export default function ChoosePlanScreen() {
                 activeOpacity={0.8}
                 style={[
                   styles.planCard,
-                  isSelected ? styles.planCardSelected : styles.planCardUnselected
+                  isSelected
+                    ? styles.planCardSelected
+                    : styles.planCardUnselected,
                 ]}
               >
                 <View style={styles.planHeader}>
-                  <Text style={styles.planTitle}>
-                    {plan.title}
-                  </Text>
-                  
+                  <Text style={styles.planTitle}>{plan.title}</Text>
+
                   {/* Radio Button */}
-                  <View 
+                  <View
                     style={[
                       styles.radioButton,
-                      isSelected ? styles.radioButtonSelected : styles.radioButtonUnselected
+                      isSelected
+                        ? styles.radioButtonSelected
+                        : styles.radioButtonUnselected,
                     ]}
                   >
-                    {isSelected && (
-                      <View style={styles.radioButtonInner} />
-                    )}
+                    {isSelected && <View style={styles.radioButtonInner} />}
                   </View>
                 </View>
-                
-                <Text style={styles.planDescription}>
-                  {plan.description}
-                </Text>
+
+                <Text style={styles.planDescription}>{plan.description}</Text>
               </TouchableOpacity>
             );
           })}
         </View>
 
-        {/* Continue Button */}
-        <TouchableOpacity
+        <Button
+          text="Continue"
           onPress={handleContinue}
           disabled={!selectedPlan}
-          activeOpacity={0.8}
-          style={[
-            styles.continueButton,
-            selectedPlan ? styles.continueButtonActive : styles.continueButtonDisabled
-          ]}
-        >
-          <Text 
-            style={[
-              styles.continueButtonText,
-              selectedPlan ? styles.continueButtonTextActive : styles.continueButtonTextDisabled
-            ]}
-          >
-            Continue
-          </Text>
-        </TouchableOpacity>
+          className="mt-10"
+        />
       </ScrollView>
     </View>
   );
