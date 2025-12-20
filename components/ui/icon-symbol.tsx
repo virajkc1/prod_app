@@ -23,6 +23,6 @@ export function IconSymbol({
 
   const materialIconName = iconMap[name] || 'circle';
 
-  return <MaterialIcons name={materialIconName as any} size={size} color={color} style={style} />;
+  return <MaterialIcons name={materialIconName as any} size={size} color={color}  />;
 }
 

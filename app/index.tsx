@@ -11,7 +11,7 @@ export default function Index() {
       </Text>
       <TouchableOpacity
         className="mt-5 px-4 py-3 bg-blue-500 rounded-lg"
-        onPress={() => router.push('/second')}>
+        onPress={() => router.push('/choose-plan')}>
         <Text className="text-white text-base font-semibold">
           Go to Second Screen
         </Text>
