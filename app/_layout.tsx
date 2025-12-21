@@ -56,6 +56,34 @@ export default function RootLayout() {
             headerShown: false,
           }}
         />
+        <Stack.Screen
+          name="long-term-memory"
+          options={{
+            title: "Long Term Memory",
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="connect-notifications"
+          options={{
+            title: "Connect Notifications",
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="give-rating"
+          options={{
+            title: "Give Rating",
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="free-trial"
+          options={{
+            title: "Free Trial",
+            headerShown: false,
+          }}
+        />
       </Stack>
       <StatusBar style="auto" />
     </>

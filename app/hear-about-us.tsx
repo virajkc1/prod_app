@@ -117,7 +117,7 @@ const HearAboutUsScreen = () => {
           <Button
             text="Continue"
             onPress={() => {
-              router.push("/");
+              router.push("/long-term-memory");
             }}
             disabled={!selectedTraffic}
           />
