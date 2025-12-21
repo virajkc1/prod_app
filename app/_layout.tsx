@@ -1,6 +1,6 @@
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import "./global.css"
+import { Stack } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import "./global.css";
 
 export default function RootLayout() {
   return (
@@ -9,28 +9,28 @@ export default function RootLayout() {
         screenOptions={{
           // Global styles for all screens
           headerStyle: {
-            backgroundColor: '#6366f1', // Purple background
+            backgroundColor: "#6366f1", // Purple background
           },
-          headerTintColor: '#fff', // White text
+          headerTintColor: "#fff", // White text
           headerTitleStyle: {
-            fontWeight: 'bold',
+            fontWeight: "bold",
             fontSize: 20,
           },
           headerShadowVisible: false, // Remove shadow
         }}
       >
-        <Stack.Screen 
-          name="index" 
-          options={{ 
-            title: 'Home',
+        <Stack.Screen
+          name="index"
+          options={{
+            title: "Home",
             // Override global styles for this screen
             headerShown: false,
-          }} 
+          }}
         />
-        <Stack.Screen 
-          name="choose-plan" 
-          options={{ 
-            title: 'Choose Plan',
+        <Stack.Screen
+          name="choose-plan"
+          options={{
+            title: "Choose Plan",
             headerShown: false, // Completely hide header
             // OR customize it:
             // headerStyle: {
@@ -38,15 +38,23 @@ export default function RootLayout() {
             // },
             // headerTintColor: '#fff',
             // presentation: 'modal', // Show as modal
-          }} 
+          }}
         />
         {/* Create Account Screen */}
-        <Stack.Screen 
-          name="create-account" 
-          options={{ 
-            title: 'Create Account',
+        <Stack.Screen
+          name="create-account"
+          options={{
+            title: "Create Account",
             headerShown: false,
-          }} 
+          }}
+        />
+        <Stack.Screen
+          name="hear-about-us"
+          options={{
+            title: "Hear About Us",
+            // Override global styles for this screen
+            headerShown: false,
+          }}
         />
       </Stack>
       <StatusBar style="auto" />
