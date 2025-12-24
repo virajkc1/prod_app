@@ -1,4 +1,10 @@
-import { View, Text, ScrollView, TouchableOpacity, TextInput } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  TextInput,
+} from "react-native";
 import { useRouter } from "expo-router";
 import Button from "@/components/onboarding/Button";
 
@@ -69,7 +75,9 @@ export default function GiveRatingScreen() {
                 5 Stars
               </Text>
               {renderStars(5)}
-              <Text className="text-sm text-gray-500 mt-1">1K+ App Ratings</Text>
+              <Text className="text-sm text-gray-500 mt-1">
+                1K+ App Ratings
+              </Text>
             </View>
           </View>
 
@@ -123,7 +131,8 @@ export default function GiveRatingScreen() {
           <Button
             text="Finish"
             onPress={() => {
-              router.push("/free-trial");
+              // Navigate to next screen or complete onboarding
+              router.push("/");
             }}
           />
         </View>
@@ -142,4 +151,3 @@ export default function GiveRatingScreen() {
     </View>
   );
 }
-

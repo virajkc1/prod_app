@@ -23,36 +23,18 @@ export default function RootLayout() {
           name="index"
           options={{
             title: "Home",
-            // Override global styles for this screen
             headerShown: false,
           }}
         />
         <Stack.Screen
-          name="choose-plan"
+          name="(onboarding)"
           options={{
-            title: "Choose Plan",
-            headerShown: false, // Completely hide header
-            // OR customize it:
-            // headerStyle: {
-            //   backgroundColor: '#8b5cf6',
-            // },
-            // headerTintColor: '#fff',
-            // presentation: 'modal', // Show as modal
-          }}
-        />
-        {/* Create Account Screen */}
-        <Stack.Screen
-          name="create-account"
-          options={{
-            title: "Create Account",
             headerShown: false,
           }}
         />
         <Stack.Screen
-          name="hear-about-us"
+          name="(tabs)"
           options={{
-            title: "Hear About Us",
-            // Override global styles for this screen
             headerShown: false,
           }}
         />
@@ -60,27 +42,6 @@ export default function RootLayout() {
           name="long-term-memory"
           options={{
             title: "Long Term Memory",
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="connect-notifications"
-          options={{
-            title: "Connect Notifications",
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="give-rating"
-          options={{
-            title: "Give Rating",
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="free-trial"
-          options={{
-            title: "Free Trial",
             headerShown: false,
           }}
         />

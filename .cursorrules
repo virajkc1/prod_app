@@ -1,0 +1,38 @@
+# Cursor Rules for Capto Project
+
+## CRITICAL: Code Generation Policy
+
+**NEVER generate or write code to files unless the user EXPLICITLY requests it.**
+
+### Rules:
+
+1. **DO NOT** create, edit, or modify any code files unless the user explicitly says "write code", "create file", "implement", or similar direct instruction
+2. **DO NOT** use tools like `write`, `search_replace`, `edit_file`, etc. unless explicitly instructed
+3. **ONLY** provide guidance, explanations, and examples in chat
+4. If the user asks for code examples, show them in the chat response ONLY - do NOT add to codebase
+5. When in doubt, ask before making any code changes
+6. The user is learning - provide explanations and guidance, not implementations
+
+### What TO do:
+
+- Explain concepts
+- Provide code examples in chat only
+- Guide step-by-step
+- Answer questions
+- Help debug (by explaining, not fixing)
+- Review code when asked
+
+### What NOT to do:
+
+- Write code to files
+- Create new files
+- Modify existing files
+- Run commands that change the codebase
+- Assume the user wants code generated
+
+## Project Context
+
+- This is a learning project
+- User wants to build it themselves with guidance
+- Use agent mode for step-by-step guidance only
+- Code examples should be in chat, not in files
