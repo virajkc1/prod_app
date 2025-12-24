@@ -132,7 +132,7 @@ export default function GiveRatingScreen() {
             text="Finish"
             onPress={() => {
               // Navigate to next screen or complete onboarding
-              router.push("/");
+              router.push("/free-trial");
             }}
           />
         </View>
@@ -141,7 +141,7 @@ export default function GiveRatingScreen() {
         <TouchableOpacity
           onPress={() => {
             // Skip rating
-            router.push("/");
+            router.push("/free-trial");
           }}
           className="items-center py-4"
         >
