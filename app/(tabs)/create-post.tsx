@@ -10,9 +10,16 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
-import { savePosts, hasPostToday, formatDate } from "@/app/utils/storage"; //helper functions
-import { Post } from "@/app/utils/types"; //type for the post
+import { useState, useEffect } from "react";
+import {
+  savePosts,
+  hasPostToday,
+  formatDate,
+  getAllTopics,
+  saveTopic,
+  topicCheck,
+} from "@/app/utils/storage"; //helper functions
+import { Post, Topic } from "@/app/utils/types"; //type for the post
 
 interface validateError {
   title?: string;
@@ -23,10 +30,39 @@ interface validateError {
 export default function CreatePostScreen() {
   const router = useRouter();
   const [title, setTitle] = useState<string>("");
-  const [topic, setTopic] = useState<string>("");
+  const [topic, setTopic] = useState<string>(""); // ← ADD THIS if missing
   const [lessons, setLessons] = useState<string[]>([""]);
   const [errors, setErrors] = useState<validateError>({});
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
+  // NEW states for topic management
+  const [savedTopics, setSavedTopics] = useState<Topic[]>([]); // All saved topics
+  const [showNewTopicForm, setShowNewTopicForm] = useState<boolean>(false); // Show/hide new topic form
+  const [newTopicName, setNewTopicName] = useState<string>(""); // New topic name input
+  const [newTopicLessons, setNewTopicLessons] = useState<string[]>([
+    "",
+    "",
+    "",
+  ]); // Default 3 lessons
+
+  // NEW states for autocomplete
+  const [showSuggestions, setShowSuggestions] = useState<boolean>(false); // Show/hide dropdown
+  const [filteredTopics, setFilteredTopics] = useState<Topic[]>([]); // Filtered suggestions
+
+  //Loading saved topics when componnent mounts
+  useEffect(() => {
+    loadSavedTopics();
+  }, []); // Empty dependency array = runs once on mount
+
+  //function to load the saved topics into state variable
+  const loadSavedTopics = async () => {
+    try {
+      const topics = await getAllTopics();
+      setSavedTopics(topics);
+    } catch (error) {
+      console.error("Error loading saved topics:", error);
+    }
+  };
 
   const addLesson = () => {
     setLessons([...lessons, ""]);
@@ -41,6 +77,29 @@ export default function CreatePostScreen() {
       setErrors({ ...errors, lessons: undefined });
     }
   };
+  // Manage new topic lessons
+  const addNewTopicLesson = () => {
+    setNewTopicLessons([...newTopicLessons, ""]);
+  };
+
+  const updateNewTopicLesson = (index: number, value: string) => {
+    const updatedLessons = [...newTopicLessons];
+    updatedLessons[index] = value;
+    setNewTopicLessons(updatedLessons);
+  };
+
+  // Cancel new topic creation
+  const handleCancelNewTopic = () => {
+    setShowNewTopicForm(false);
+    setNewTopicName("");
+    setNewTopicLessons(["", "", ""]); // Reset to 3 empty lessons
+  };
+
+  // Save new topic (placeholder for now - we'll implement in Phase 5)
+  const handleSaveNewTopic = async () => {
+    console.log("Save topic clicked - will implement in Phase 5");
+    // TODO: Add validation and save logic
+  };
 
   const validateForm = (): boolean => {
     const newErrors: { title?: string; topic?: string; lessons?: string } = {};
@@ -48,11 +107,6 @@ export default function CreatePostScreen() {
     // Validate title
     if (!title.trim()) {
       newErrors.title = "Title is required";
-    }
-
-    // Validate topic
-    if (!topic.trim()) {
-      newErrors.topic = "Topic is required";
     }
 
     // Validate lessons - at least one non-empty lesson
@@ -174,7 +228,6 @@ export default function CreatePostScreen() {
               <Text className="text-red-500 text-sm mt-1">{errors.title}</Text>
             )}
           </View>
-
           {/* Topic Input */}
           <View className="mb-6">
             <Text className="text-base font-semibold text-gray-900 mb-2">
@@ -198,7 +251,6 @@ export default function CreatePostScreen() {
               <Text className="text-red-500 text-sm mt-1">{errors.topic}</Text>
             )}
           </View>
-
           {/* Lessons Learnt Section */}
           <View className="mb-4">
             <Text className="text-base font-semibold text-gray-900 mb-3">
@@ -235,16 +287,86 @@ export default function CreatePostScreen() {
             <TouchableOpacity
               className="bg-orange-200 rounded-xl py-3 px-6 items-center"
               activeOpacity={0.8}
+              onPress={() => setShowNewTopicForm(!showNewTopicForm)} //so once its clicked, it displays the new topic section initially
             >
               <Text className="text-gray-900 text-base font-semibold">
-                New Topic
+                {showNewTopicForm ? "Cancel New Topic" : "New Topic"}
               </Text>
             </TouchableOpacity>
           </View>
+          {showNewTopicForm && (
+            <View className="mx-5 mt-4 bg-white rounded-2xl p-5 shadow-sm border border-orange-300">
+              <Text className="text-lg font-bold text-gray-900 mb-4">
+                Create New Topic Template
+              </Text>
+
+              {/* New Topic Name Input */}
+              <View className="mb-6">
+                <Text className="text-base font-semibold text-gray-900 mb-2">
+                  Topic Name
+                </Text>
+                <TextInput
+                  placeholder="e.g., React JS, Python, etc."
+                  placeholderTextColor="#9CA3AF"
+                  value={newTopicName}
+                  onChangeText={setNewTopicName}
+                  className="bg-gray-50 rounded-xl px-4 py-3 text-base text-gray-900 border border-gray-200"
+                />
+              </View>
+              {/* Default Lessons Input */}
+              <View className="mb-4">
+                <Text className="text-base font-semibold text-gray-900 mb-3">
+                  Default Lessons (Template)
+                </Text>
+                {newTopicLessons.map((lesson, index) => (
+                  <View key={index} className="flex-row items-center mb-3">
+                    <View className="mr-3">
+                      <Text className="text-gray-900 text-lg">◆</Text>
+                    </View>
+                    <TextInput
+                      placeholder="Enter default lesson..."
+                      placeholderTextColor="#9CA3AF"
+                      value={lesson}
+                      onChangeText={(value) =>
+                        updateNewTopicLesson(index, value)
+                      }
+                      className="flex-1 bg-gray-50 rounded-xl px-4 py-3 text-base text-gray-900 border border-gray-200"
+                    />
+                  </View>
+                ))}
+                <TouchableOpacity onPress={addNewTopicLesson} className="mt-2">
+                  <Text className="text-blue-600 text-sm font-medium">
+                    Add more...
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* Action Buttons */}
+              <View className="flex-row gap-3 mt-4">
+                <TouchableOpacity
+                  onPress={handleCancelNewTopic}
+                  className="flex-1 bg-gray-200 rounded-xl py-3 items-center"
+                  activeOpacity={0.8}
+                >
+                  <Text className="text-gray-900 text-base font-semibold">
+                    Cancel
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={handleSaveNewTopic}
+                  className="flex-1 bg-orange-500 rounded-xl py-3 items-center"
+                  activeOpacity={0.8}
+                >
+                  <Text className="text-white text-base font-semibold">
+                    Save Topic
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
+          ;
         </View>
-
-        {/* New Topic Button */}
-
         {/* Submit Button */}
         <View className="mx-5 mt-4 mb-8">
           <TouchableOpacity

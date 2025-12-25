@@ -12,4 +12,11 @@ interface User {
   email: string;
 }
 
-export type { Post, User };
+interface Topic {
+  id: string;
+  name: string;
+  defaultLessons: string[];
+  createdAt: string;
+}
+
+export type { Post, User, Topic };

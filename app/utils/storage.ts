@@ -1,8 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Post } from "./types";
+import { Post, Topic } from "./types";
 
 //Storage Key - This is to retreive your posts, @ is a common convention
 const STORAGE_KEY = "@capto_posts";
+const TOPIC_STORAGE_KEY = "@capto_topics";
 
 // Format date to DD/MM/YYYY Function - Utility Function
 const formatDate = (date: Date): string => {
@@ -70,4 +71,47 @@ const hasPostToday = async (): Promise<boolean> => {
   }
 };
 
-export { getPosts, savePosts, hasPostToday, formatDate };
+const getAllTopics = async (): Promise<Topic[]> => {
+  try {
+    const value = await AsyncStorage.getItem(TOPIC_STORAGE_KEY); //get the item with this key
+    if (value !== null) {
+      const topics = JSON.parse(value) as Topic[]; // this will get the JSON text and parse it as an array of topics
+      //Sort it alphabetically
+      return topics.sort((a, b) => a.name.localeCompare(b.name)); //based on the name attribute of each Topic Object
+    }
+  } catch (error) {
+    console.log("Error getting topics", error);
+  }
+  return [];
+};
+
+const saveTopic = async (topic: Topic) => {
+  //How to save a topic
+  try {
+    const curr_topics = await getAllTopics(); //get current topics
+    const new_topics = [...curr_topics, topic];
+    await AsyncStorage.setItem(TOPIC_STORAGE_KEY, JSON.stringify(new_topics)); //Why do we need to stringify
+  } catch (error) {
+    console.log("Error saving topic", error);
+  }
+};
+
+const topicCheck = async (topicName: string): Promise<boolean> => {
+  try {
+    const topics = await getAllTopics();
+    return topics.some(
+      (topic) => topic.name.toLowerCase() === topicName.toLowerCase()
+    ); //returns true or false if we found the error
+  } catch (error) {
+    console.log("Error in topicCheck function", error);
+  }
+};
+
+export {
+  getPosts,
+  savePosts,
+  hasPostToday,
+  formatDate,
+  getAllTopics,
+  saveTopic,
+};
