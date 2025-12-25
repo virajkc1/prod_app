@@ -56,7 +56,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="create-post"
         options={{
-          title: "Create Post",
+          title: "Create ",
           tabBarIcon: () => (
             <View style={styles.createPostButton}>
               <Ionicons name="add" size={28} color="#FFFFFF" />

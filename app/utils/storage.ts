@@ -4,6 +4,16 @@ import { Post } from "./types";
 //Storage Key - This is to retreive your posts, @ is a common convention
 const STORAGE_KEY = "@capto_posts";
 
+// Format date to DD/MM/YYYY Function - Utility Function
+const formatDate = (date: Date): string => {
+  //Date is a JS object
+  const day = String(date.getDate()).padStart(2, "0"); //getDate gets day of month eg: 1 to 31 and converts into a String
+  //ensures string is 2 characters long else it will add a 0 to the start eg: 4 turns to "04"
+  const month = String(date.getMonth() + 1).padStart(2, "0"); //get month ranges from 0 to 11 so we add 1 to that value eg: 1 to 12
+  const year = date.getFullYear(); //getFullYear gets the full year eg: 2025
+  return `${day}/${month}/${year}`; //returns the date in the format DD/MM/YYYY
+};
+
 const getPosts = async (): Promise<Post[]> => {
   //makes the functio async and returns a promise of an array of posts
   //Promise is a JS object that represents a value that will exist in the future
@@ -14,7 +24,15 @@ const getPosts = async (): Promise<Post[]> => {
     //value returned is a string if promise is resolved else its null
     if (value !== null) {
       //if the value is not null, parse the value as an array of Post objects
-      return JSON.parse(value) as Post[]; //the value is a string, so we need to parse it as an array of Post objects
+      const posts = JSON.parse(value) as Post[]; //parses the value as an array of Post objects
+      // Sort posts by date (newest first) - parse date string to compare
+      return posts.sort((a, b) => {
+        //in place sort, O(n) time complexity
+        const dateA = a.date.split("/").reverse().join("-"); // Convert DD/MM/YYYY to YYYY-MM-DD
+        const dateB = b.date.split("/").reverse().join("-");
+        return dateB.localeCompare(dateA); // Descending order (newest first)
+        //localeCompare - compares 2 strings if <0 then dateB is before dateA
+      });
     }
   } catch (error) {
     //if the promise is rejected, catch the error
@@ -35,4 +53,21 @@ const savePosts = async (p: Post[]) => {
   }
 };
 
-export { getPosts, savePosts };
+const hasPostToday = async (): Promise<boolean> => {
+  try {
+    const posts = await getPosts();
+    const today = formatDate(new Date());
+    return posts.some((post) => post.date === today);
+    //.some method iterates through the array to find the element with post.date === today's date
+    //some method better than filter as it breaks if resolves to true
+
+    //some will return true or false, best for checks
+    //.find, returns the first matching item
+    //every returns do all match
+  } catch (error) {
+    console.error("Error checking post today:", error);
+    return false;
+  }
+};
+
+export { getPosts, savePosts, hasPostToday, formatDate };

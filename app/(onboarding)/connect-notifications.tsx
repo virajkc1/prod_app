@@ -86,7 +86,7 @@ export default function ConnectNotificationsScreen() {
         <TouchableOpacity
           onPress={() => {
             // Skip notification setup
-            router.push("/");
+            router.push("/give-rating");
           }}
           className="items-center py-4"
         >
@@ -96,4 +96,3 @@ export default function ConnectNotificationsScreen() {
     </View>
   );
 }
-
