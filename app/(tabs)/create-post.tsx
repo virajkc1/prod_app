@@ -10,95 +10,82 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { useState, useEffect } from "react";
-import {
-  savePosts,
-  hasPostToday,
-  formatDate,
-  getAllTopics,
-  saveTopic,
-  topicCheck,
-} from "@/app/utils/storage"; //helper functions
-import { Post, Topic } from "@/app/utils/types"; //type for the post
+import { useState } from "react";
+import { savePosts, hasPostToday, formatDate } from "@/app/utils/storage"; //helper functions
+import { Post, TopicBlock } from "@/app/utils/types"; //type for the post
 
+//interface to validate the form entry
 interface validateError {
   title?: string;
   topic?: string;
   lessons?: string;
 }
 
+//functional component to create a post
 export default function CreatePostScreen() {
-  const router = useRouter();
-  const [title, setTitle] = useState<string>("");
-  const [topic, setTopic] = useState<string>(""); // ← ADD THIS if missing
-  const [lessons, setLessons] = useState<string[]>([""]);
-  const [errors, setErrors] = useState<validateError>({});
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const router = useRouter(); //useRouter is a webhook to navigate between screens
+  const [title, setTitle] = useState<string>(""); //title of the post
 
-  // NEW states for topic management
-  const [savedTopics, setSavedTopics] = useState<Topic[]>([]); // All saved topics
-  const [showNewTopicForm, setShowNewTopicForm] = useState<boolean>(false); // Show/hide new topic form
-  const [newTopicName, setNewTopicName] = useState<string>(""); // New topic name input
-  const [newTopicLessons, setNewTopicLessons] = useState<string[]>([
-    "",
-    "",
-    "",
-  ]); // Default 3 lessons
+  // Array of topic blocks - starts empty, user clicks "Add Topic" to add blocks
+  const [topicBlocks, setTopicBlocks] = useState<TopicBlock[]>([]); // Option A: Empty array
 
-  // NEW states for autocomplete
-  const [showSuggestions, setShowSuggestions] = useState<boolean>(false); // Show/hide dropdown
-  const [filteredTopics, setFilteredTopics] = useState<Topic[]>([]); // Filtered suggestions
+  const [errors, setErrors] = useState<validateError>({}); // errors of the form
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false); // loading state eg: loading spinner
 
-  //Loading saved topics when componnent mounts
-  useEffect(() => {
-    loadSavedTopics();
-  }, []); // Empty dependency array = runs once on mount
+  // ============ TOPIC BLOCK MANAGEMENT FUNCTIONS ============
 
-  //function to load the saved topics into state variable
-  const loadSavedTopics = async () => {
-    try {
-      const topics = await getAllTopics();
-      setSavedTopics(topics);
-    } catch (error) {
-      console.error("Error loading saved topics:", error);
-    }
+  // Function 1: Add a new empty topic block
+  const addTopicBlock = () => {
+    const newBlock: TopicBlock = {
+      id: Date.now().toString(), // Unique timestamp ID
+      topicName: "", // Empty topic name
+      lessons: [""], // Start with one empty lesson input field
+    };
+    setTopicBlocks((prev) => [...prev, newBlock]); // Add to array without mutation
   };
 
-  const addLesson = () => {
-    setLessons([...lessons, ""]);
+  // Function 2: Delete a topic block by id
+  const deleteTopicBlock = (idToDelete: string) => {
+    setTopicBlocks((prev) => prev.filter((block) => block.id !== idToDelete)); //.filter once found will remove the item so make the item shorter but .map will keep the item but change the item
   };
 
-  const updateLesson = (index: number, value: string) => {
-    const updatedLessons = [...lessons];
-    updatedLessons[index] = value;
-    setLessons(updatedLessons);
-    // Clear lessons error when user starts typing
-    if (errors.lessons) {
-      setErrors({ ...errors, lessons: undefined });
-    }
-  };
-  // Manage new topic lessons
-  const addNewTopicLesson = () => {
-    setNewTopicLessons([...newTopicLessons, ""]);
+  // Function 3: Update a topic block's name
+  const updateTopicName = (topicId: string, newName: string) => {
+    setTopicBlocks((prev) =>
+      prev.map((block) =>
+        block.id === topicId ? { ...block, topicName: newName } : block
+      )
+    );
   };
 
-  const updateNewTopicLesson = (index: number, value: string) => {
-    const updatedLessons = [...newTopicLessons];
-    updatedLessons[index] = value;
-    setNewTopicLessons(updatedLessons);
+  // Function 4: Add a new empty lesson to a specific topic block
+  const addLessonToTopic = (topicId: string) => {
+    setTopicBlocks((prev) =>
+      prev.map((block) =>
+        block.id === topicId
+          ? { ...block, lessons: [...block.lessons, ""] }
+          : block
+      )
+    );
   };
 
-  // Cancel new topic creation
-  const handleCancelNewTopic = () => {
-    setShowNewTopicForm(false);
-    setNewTopicName("");
-    setNewTopicLessons(["", "", ""]); // Reset to 3 empty lessons
-  };
-
-  // Save new topic (placeholder for now - we'll implement in Phase 5)
-  const handleSaveNewTopic = async () => {
-    console.log("Save topic clicked - will implement in Phase 5");
-    // TODO: Add validation and save logic
+  // Function 5: Update a specific lesson within a topic block
+  const updateTopicLesson = (
+    topicId: string,
+    lessonIndex: number,
+    newValue: string
+  ) => {
+    setTopicBlocks((prev) =>
+      prev.map((block) => {
+        if (block.id === topicId) {
+          const updatedLessons = [...block.lessons]; //rather than modifying the original
+          //best to create a new array as it causes different REFERENCES so the change is detected by react and it RE RENDERS SO UI SHOWS THE CHANGE
+          updatedLessons[lessonIndex] = newValue;
+          return { ...block, lessons: updatedLessons };
+        }
+        return block;
+      })
+    );
   };
 
   const validateForm = (): boolean => {
@@ -109,12 +96,27 @@ export default function CreatePostScreen() {
       newErrors.title = "Title is required";
     }
 
-    // Validate lessons - at least one non-empty lesson
-    const nonEmptyLessons = lessons.filter(
-      (lesson) => lesson.trim().length > 0
-    );
-    if (nonEmptyLessons.length === 0) {
-      newErrors.lessons = "At least one lesson is required";
+    // Validate topic blocks - at least one topic block required
+    if (topicBlocks.length === 0) {
+      newErrors.topic = "At least one topic is required";
+      setErrors(newErrors);
+      return false;
+    }
+
+    // Validate each topic block has a name and at least one non-empty lesson
+    for (const block of topicBlocks) {
+      if (!block.topicName.trim()) {
+        newErrors.topic = "All topics must have a name";
+        break;
+      }
+
+      const nonEmptyLessons = block.lessons.filter(
+        (lesson) => lesson.trim().length > 0
+      );
+      if (nonEmptyLessons.length === 0) {
+        newErrors.lessons = "Each topic must have at least one lesson";
+        break; //needed to break out of the loop but not the entire function so that setErrors is called after the loop
+      }
     }
 
     setErrors(newErrors);
@@ -147,9 +149,15 @@ export default function CreatePostScreen() {
 
     try {
       // Filter out empty lessons
-      const filteredLessons = lessons.filter(
-        (lesson) => lesson.trim().length > 0
-      );
+      const cleanedTopics = topicBlocks.map((block) => {
+        const cleanedLessons = block.lessons.filter(
+          (lesson) => lesson.trim().length > 0
+        );
+        return {
+          ...block,
+          lessons: cleanedLessons,
+        };
+      });
 
       // Generate post ID and date
       const postId = Date.now().toString();
@@ -159,8 +167,7 @@ export default function CreatePostScreen() {
       const newPost: Post = {
         id: postId,
         title: title.trim(),
-        topic: topic.trim(),
-        lessons: filteredLessons,
+        topics: cleanedTopics,
         date: postDate,
       };
 
@@ -228,144 +235,98 @@ export default function CreatePostScreen() {
               <Text className="text-red-500 text-sm mt-1">{errors.title}</Text>
             )}
           </View>
-          {/* Topic Input */}
-          <View className="mb-6">
-            <Text className="text-base font-semibold text-gray-900 mb-2">
-              Topic
-            </Text>
-            <TextInput
-              placeholder="Enter Here"
-              placeholderTextColor="#9CA3AF"
-              value={topic}
-              onChangeText={(value) => {
-                setTopic(value);
-                if (errors.topic) {
-                  setErrors({ ...errors, topic: undefined });
-                }
-              }}
-              className={`bg-gray-50 rounded-xl px-4 py-3 text-base text-gray-900 border ${
-                errors.topic ? "border-red-500" : "border-gray-200"
-              }`}
-            />
-            {errors.topic && (
-              <Text className="text-red-500 text-sm mt-1">{errors.topic}</Text>
-            )}
-          </View>
-          {/* Lessons Learnt Section */}
-          <View className="mb-4">
-            <Text className="text-base font-semibold text-gray-900 mb-3">
-              Lessons Learnt
-            </Text>
-            {lessons.map((lesson, index) => (
-              <View key={index} className="flex-row items-center mb-3">
-                <View className="mr-3">
-                  <Text className="text-gray-900 text-lg">◆</Text>
-                </View>
-                <TextInput
-                  placeholder="Enter lesson..."
-                  placeholderTextColor="#9CA3AF"
-                  value={lesson}
-                  onChangeText={(value) => updateLesson(index, value)}
-                  className={`flex-1 bg-gray-50 rounded-xl px-4 py-3 text-base text-gray-900 border ${
-                    errors.lessons ? "border-red-500" : "border-gray-200"
-                  }`}
-                />
-              </View>
-            ))}
-            <TouchableOpacity onPress={addLesson} className="mt-2">
-              <Text className="text-blue-600 text-sm font-medium">
-                Add more...
-              </Text>
-            </TouchableOpacity>
-            {errors.lessons && (
-              <Text className="text-red-500 text-sm mt-1">
-                {errors.lessons}
-              </Text>
-            )}
-          </View>
-          <View className="mx-5 mt-6">
-            <TouchableOpacity
-              className="bg-orange-200 rounded-xl py-3 px-6 items-center"
-              activeOpacity={0.8}
-              onPress={() => setShowNewTopicForm(!showNewTopicForm)} //so once its clicked, it displays the new topic section initially
-            >
-              <Text className="text-gray-900 text-base font-semibold">
-                {showNewTopicForm ? "Cancel New Topic" : "New Topic"}
-              </Text>
-            </TouchableOpacity>
-          </View>
-          {showNewTopicForm && (
-            <View className="mx-5 mt-4 bg-white rounded-2xl p-5 shadow-sm border border-orange-300">
-              <Text className="text-lg font-bold text-gray-900 mb-4">
-                Create New Topic Template
-              </Text>
 
-              {/* New Topic Name Input */}
-              <View className="mb-6">
-                <Text className="text-base font-semibold text-gray-900 mb-2">
-                  Topic Name
-                </Text>
-                <TextInput
-                  placeholder="e.g., React JS, Python, etc."
-                  placeholderTextColor="#9CA3AF"
-                  value={newTopicName}
-                  onChangeText={setNewTopicName}
-                  className="bg-gray-50 rounded-xl px-4 py-3 text-base text-gray-900 border border-gray-200"
-                />
-              </View>
-              {/* Default Lessons Input */}
-              <View className="mb-4">
-                <Text className="text-base font-semibold text-gray-900 mb-3">
-                  Default Lessons (Template)
-                </Text>
-                {newTopicLessons.map((lesson, index) => (
-                  <View key={index} className="flex-row items-center mb-3">
-                    <View className="mr-3">
-                      <Text className="text-gray-900 text-lg">◆</Text>
-                    </View>
-                    <TextInput
-                      placeholder="Enter default lesson..."
-                      placeholderTextColor="#9CA3AF"
-                      value={lesson}
-                      onChangeText={(value) =>
-                        updateNewTopicLesson(index, value)
-                      }
-                      className="flex-1 bg-gray-50 rounded-xl px-4 py-3 text-base text-gray-900 border border-gray-200"
-                    />
-                  </View>
-                ))}
-                <TouchableOpacity onPress={addNewTopicLesson} className="mt-2">
-                  <Text className="text-blue-600 text-sm font-medium">
-                    Add more...
-                  </Text>
-                </TouchableOpacity>
-              </View>
+          {/* ============ TOPIC BLOCKS SECTION ============ */}
 
-              {/* Action Buttons */}
-              <View className="flex-row gap-3 mt-4">
-                <TouchableOpacity
-                  onPress={handleCancelNewTopic}
-                  className="flex-1 bg-gray-200 rounded-xl py-3 items-center"
-                  activeOpacity={0.8}
-                >
-                  <Text className="text-gray-900 text-base font-semibold">
-                    Cancel
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={handleSaveNewTopic}
-                  className="flex-1 bg-orange-500 rounded-xl py-3 items-center"
-                  activeOpacity={0.8}
-                >
-                  <Text className="text-white text-base font-semibold">
-                    Save Topic
-                  </Text>
-                </TouchableOpacity>
-              </View>
+          {/* Show "Add Topic" button if no topics exist */}
+          {topicBlocks.length === 0 ? (
+            <View className="mb-6 items-center py-8">
+              <Text className="text-gray-500 mb-4">No topics yet</Text>
+              <TouchableOpacity
+                onPress={addTopicBlock}
+                className="bg-blue-500 rounded-xl px-6 py-3"
+              >
+                <Text className="text-white font-semibold">Add Topic</Text>
+              </TouchableOpacity>
             </View>
+          ) : (
+            <>
+              {/* Render each topic block */}
+              {topicBlocks.map((block, blockIndex) => (
+                <View key={block.id} className="mb-6">
+                  {/* Topic Header with Delete Button */}
+                  <View className="flex-row justify-between items-center mb-3">
+                    <Text className="text-base font-semibold text-gray-900">
+                      Topic {blockIndex + 1}
+                    </Text>
+                    <TouchableOpacity
+                      onPress={() => deleteTopicBlock(block.id)}
+                      className="p-2"
+                    >
+                      <Ionicons
+                        name="trash-outline"
+                        size={20}
+                        color="#EF4444"
+                      />
+                    </TouchableOpacity>
+                  </View>
+
+                  {/* Topic Name Input */}
+                  <TextInput
+                    placeholder="Enter topic name..."
+                    placeholderTextColor="#9CA3AF"
+                    value={block.topicName}
+                    onChangeText={(value) => updateTopicName(block.id, value)}
+                    className="bg-gray-50 rounded-xl px-4 py-3 text-base text-gray-900 border border-gray-200 mb-4"
+                  />
+
+                  {/* Lessons for this Topic */}
+                  <Text className="text-sm font-medium text-gray-700 mb-2">
+                    Lessons Learnt
+                  </Text>
+                  {block.lessons.map((lesson, lessonIndex) => (
+                    <View
+                      key={lessonIndex}
+                      className="flex-row items-center mb-3"
+                    >
+                      <View className="mr-3">
+                        <Text className="text-gray-900 text-lg">◆</Text>
+                      </View>
+                      <TextInput
+                        placeholder="Enter lesson..."
+                        placeholderTextColor="#9CA3AF"
+                        value={lesson}
+                        onChangeText={(value) =>
+                          updateTopicLesson(block.id, lessonIndex, value)
+                        }
+                        className="flex-1 bg-gray-50 rounded-xl px-4 py-3 text-base text-gray-900 border border-gray-200"
+                      />
+                    </View>
+                  ))}
+
+                  {/* Add More Lessons Button */}
+                  <TouchableOpacity
+                    onPress={() => addLessonToTopic(block.id)}
+                    className="mt-2"
+                  >
+                    <Text className="text-blue-600 text-sm font-medium">
+                      Add more lessons...
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              ))}
+
+              {/* Add Another Topic Button */}
+              <TouchableOpacity
+                onPress={addTopicBlock}
+                className="bg-blue-100 rounded-xl px-6 py-3 items-center mb-4"
+              >
+                <Text className="text-blue-600 font-semibold">
+                  + Add Another Topic
+                </Text>
+              </TouchableOpacity>
+            </>
           )}
-          ;
         </View>
         {/* Submit Button */}
         <View className="mx-5 mt-4 mb-8">

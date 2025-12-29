@@ -104,6 +104,7 @@ const topicCheck = async (topicName: string): Promise<boolean> => {
     ); //returns true or false if we found the error
   } catch (error) {
     console.log("Error in topicCheck function", error);
+    return false; //error handled
   }
 };
 
@@ -114,4 +115,5 @@ export {
   formatDate,
   getAllTopics,
   saveTopic,
+  topicCheck,
 };

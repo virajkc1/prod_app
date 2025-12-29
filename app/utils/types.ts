@@ -1,8 +1,7 @@
 interface Post {
   id: string;
   title: string;
-  topic: string;
-  lessons: string[];
+  topics: TopicBlock[];
   date: string;
 }
 
@@ -19,4 +18,10 @@ interface Topic {
   createdAt: string;
 }
 
-export type { Post, User, Topic };
+interface TopicBlock {
+  id: string;
+  topicName: string;
+  lessons: string[];
+}
+
+export type { Post, User, Topic, TopicBlock };

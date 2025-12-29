@@ -13,8 +13,8 @@ export default function TabLayout() {
           backgroundColor: "#FFFFFF",
           borderTopColor: "#E5E7EB",
           borderTopWidth: 1,
-          height: 65,
-          paddingBottom: 8,
+          height: 85,
+          paddingBottom: 20,
           paddingTop: 8,
         },
         tabBarLabelStyle: {
@@ -56,19 +56,13 @@ export default function TabLayout() {
       <Tabs.Screen
         name="create-post"
         options={{
-          title: "Create ",
+          title: "",
+          tabBarLabel: () => null,
           tabBarIcon: () => (
             <View style={styles.createPostButton}>
               <Ionicons name="add" size={28} color="#FFFFFF" />
             </View>
           ),
-          tabBarLabel: "Create Post",
-          tabBarLabelStyle: {
-            fontSize: 12,
-            fontWeight: "500",
-            color: "#F97316",
-            marginTop: -8,
-          },
         }}
       />
       <Tabs.Screen

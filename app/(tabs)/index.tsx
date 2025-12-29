@@ -41,9 +41,10 @@ export default function WelcomePage() {
       setPosts(loadedPosts); // State update #1
 
       // Extract unique topics
-      const uniqueTopics = Array.from(
-        new Set(loadedPosts.map((post) => post.topic))
-      );
+      const allTopics = loadedPosts
+        .flatMap((post) => post.topics)
+        .map((topic) => topic.topicName); //map gets all the topics from each post then flattens them meaning that instead of array of arrays all elemenets become 1
+      const uniqueTopics = Array.from(new Set(allTopics)); //can be changed with chaining, code review
       const topicsWithColors = uniqueTopics.map((topic) => ({
         name: topic,
         color: getTopicColor(topic),
@@ -91,9 +92,9 @@ export default function WelcomePage() {
     id: post.id,
     date: post.date,
     title: post.title,
-    tags: [post.topic],
-    tagColors: [getTopicColor(post.topic)],
-    content: post.lessons,
+    tags: post.topics.map((topic) => topic.topicName),
+    tagColors: post.topics.map((topic) => getTopicColor(topic.topicName)),
+    content: post.topics.flatMap((topic) => topic.lessons),
   }));
 
   return (
@@ -170,12 +171,15 @@ export default function WelcomePage() {
                   {latestPost.date}
                 </Text>
                 <View className="gap-1">
-                  {latestPost.lessons.length > 0 ? (
-                    latestPost.lessons.map((lesson, idx) => (
-                      <Text key={idx} className="text-xs text-gray-700">
-                        • {lesson}
-                      </Text>
-                    ))
+                  {latestPost.topics.flatMap((topic) => topic.lessons).length >
+                  0 ? (
+                    latestPost.topics
+                      .flatMap((topic) => topic.lessons)
+                      .map((lesson, idx) => (
+                        <Text key={idx} className="text-xs text-gray-700">
+                          • {lesson}
+                        </Text>
+                      ))
                   ) : (
                     <Text className="text-xs text-gray-500">
                       No lessons added
