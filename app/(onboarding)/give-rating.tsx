@@ -24,12 +24,6 @@ export default function GiveRatingScreen() {
       rating: 5,
       text: "Hello testing testing this will be a review soon when i decide to create more reviews and develop this page",
     },
-    {
-      id: 3,
-      name: "Viraj Chapaneri",
-      rating: 5,
-      text: "Hello testing testing this will be a review soon when i decide to create more reviews and develop this page",
-    },
   ];
 
   const renderStars = (count: number) => {
@@ -45,7 +39,7 @@ export default function GiveRatingScreen() {
   };
 
   return (
-    <View className="flex-1 bg-gray-100">
+    <View className="flex-1 py-10 bg-gray-100">
       <ScrollView
         className="flex-1"
         contentContainerStyle={{
@@ -56,6 +50,23 @@ export default function GiveRatingScreen() {
         }}
         showsVerticalScrollIndicator={false}
       >
+        {/* Back Button */}
+        <TouchableOpacity
+          className="mb-6 w-10 h-10 justify-center"
+          onPress={() => router.back()}
+        >
+          <Text className="text-3xl text-gray-900 font-light">←</Text>
+        </TouchableOpacity>
+
+        {/* Progress Bar */}
+        <View className="mb-8">
+          <View className="h-2 bg-gray-200 rounded-full">
+            <View
+              className="h-2 bg-green-500 rounded-full"
+              style={{ width: "82%" }}
+            />
+          </View>
+        </View>
         {/* Title */}
         <Text className="text-3xl font-bold text-[#111827] mb-6">
           Give us a rating

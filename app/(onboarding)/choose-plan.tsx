@@ -1,22 +1,7 @@
 import { useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  StyleSheet,
-} from "react-native";
+import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import Button from "@/components/onboarding/Button";
-
-/**
- * Choose Plan Screen
- *
- * Route: "/choose-plan"
- * - Allows user to select their productivity plan
- * - Has back button to return to homepage
- * - Uses expo-router for navigation
- */
 
 type PlanType = "relaxed" | "balanced" | "intense" | null;
 
@@ -44,37 +29,52 @@ export default function ChoosePlanScreen() {
 
   const handleContinue = () => {
     if (selectedPlan) {
-      // TODO: Navigate to next screen or save selection
       router.push("/create-account");
     }
   };
 
   return (
-    <View style={styles.container}>
+    <View className="flex-1 py-10 bg-white">
       <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
+        className="flex-1"
+        contentContainerStyle={{
+          paddingHorizontal: 20,
+          paddingTop: 40,
+          paddingBottom: 100,
+          flexGrow: 1,
+        }}
         showsVerticalScrollIndicator={false}
       >
         {/* Back Button */}
         <TouchableOpacity
-          style={styles.backButton}
+          className="mb-6 w-10 h-10 justify-center"
           onPress={() => router.back()}
-          activeOpacity={0.7}
         >
-          <Text style={styles.backArrow}>←</Text>
+          <Text className="text-3xl text-gray-900 font-light">←</Text>
         </TouchableOpacity>
 
-        {/* Header */}
-        <Text style={styles.title}>Choose your Plan</Text>
+        {/* Progress Bar */}
+        <View className="mb-8">
+          <View className="h-2 bg-gray-200 rounded-full">
+            <View
+              className="h-2 bg-green-500 rounded-full"
+              style={{ width: "0%" }}
+            />
+          </View>
+        </View>
+
+        {/* Title */}
+        <Text className="text-3xl font-bold text-[#111827] mb-2">
+          Choose your Plan
+        </Text>
 
         {/* Subtitle */}
-        <Text style={styles.subtitle}>
+        <Text className="text-base text-[#6B7280] mb-10">
           Select the intensity that works best for your lifestyle
         </Text>
 
         {/* Plan Options */}
-        <View style={styles.plansContainer}>
+        <View className="mb-10">
           {plans.map((plan) => {
             const isSelected = selectedPlan === plan.id;
 
@@ -83,159 +83,48 @@ export default function ChoosePlanScreen() {
                 key={plan.id}
                 onPress={() => setSelectedPlan(plan.id)}
                 activeOpacity={0.8}
-                style={[
-                  styles.planCard,
+                className={`rounded-xl border-2 mb-4 p-5 ${
                   isSelected
-                    ? styles.planCardSelected
-                    : styles.planCardUnselected,
-                ]}
+                    ? "border-blue-500 bg-blue-50"
+                    : "border-gray-200 bg-white"
+                }`}
               >
-                <View style={styles.planHeader}>
-                  <Text style={styles.planTitle}>{plan.title}</Text>
+                <View className="flex-row justify-between items-center mb-2">
+                  <Text className="text-lg font-bold text-[#111827] flex-1">
+                    {plan.title}
+                  </Text>
 
                   {/* Radio Button */}
                   <View
-                    style={[
-                      styles.radioButton,
+                    className={`w-6 h-6 rounded-full border-2 justify-center items-center ${
                       isSelected
-                        ? styles.radioButtonSelected
-                        : styles.radioButtonUnselected,
-                    ]}
+                        ? "border-blue-500 bg-blue-500"
+                        : "border-gray-300 bg-white"
+                    }`}
                   >
-                    {isSelected && <View style={styles.radioButtonInner} />}
+                    {isSelected && (
+                      <View className="w-2.5 h-2.5 rounded-full bg-white" />
+                    )}
                   </View>
                 </View>
 
-                <Text style={styles.planDescription}>{plan.description}</Text>
+                <Text className="text-sm text-[#6B7280] leading-5 mt-1">
+                  {plan.description}
+                </Text>
               </TouchableOpacity>
             );
           })}
         </View>
 
-        <Button
-          text="Continue"
-          onPress={handleContinue}
-          disabled={!selectedPlan}
-          className="mt-10"
-        />
+        {/* Continue Button */}
+        <View className="mb-10">
+          <Button
+            text="Continue"
+            onPress={handleContinue}
+            disabled={!selectedPlan}
+          />
+        </View>
       </ScrollView>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#ffffff",
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingHorizontal: 20,
-    paddingTop: 40,
-    paddingBottom: 40,
-  },
-  backButton: {
-    marginBottom: 24,
-    width: 40,
-    height: 40,
-    justifyContent: "center",
-  },
-  backArrow: {
-    fontSize: 30,
-    color: "#111827",
-    fontWeight: "300",
-  },
-  title: {
-    fontSize: 30,
-    fontWeight: "bold",
-    color: "#111827",
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: "#6B7280",
-    marginBottom: 40,
-  },
-  plansContainer: {
-    marginBottom: 40,
-  },
-  planCard: {
-    borderRadius: 12,
-    borderWidth: 2,
-    marginBottom: 16,
-    padding: 20,
-  },
-  planCardSelected: {
-    borderColor: "#3B82F6",
-    backgroundColor: "#EFF6FF",
-  },
-  planCardUnselected: {
-    borderColor: "#E5E7EB",
-    backgroundColor: "#ffffff",
-  },
-  planHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 8,
-  },
-  planTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#111827",
-    flex: 1,
-  },
-  radioButton: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    borderWidth: 2,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  radioButtonSelected: {
-    borderColor: "#3B82F6",
-    backgroundColor: "#3B82F6",
-  },
-  radioButtonUnselected: {
-    borderColor: "#D1D5DB",
-    backgroundColor: "#ffffff",
-  },
-  radioButtonInner: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: "#ffffff",
-  },
-  planDescription: {
-    fontSize: 14,
-    color: "#6B7280",
-    lineHeight: 20,
-    marginTop: 4,
-  },
-  continueButton: {
-    padding: 16,
-    borderRadius: 8,
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  continueButtonActive: {
-    backgroundColor: "#3B82F6",
-  },
-  continueButtonDisabled: {
-    backgroundColor: "#E5E7EB",
-  },
-  continueButtonText: {
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  continueButtonTextActive: {
-    color: "#ffffff",
-  },
-  continueButtonTextDisabled: {
-    color: "#9CA3AF",
-  },
-});

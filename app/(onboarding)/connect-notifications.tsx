@@ -6,7 +6,7 @@ export default function ConnectNotificationsScreen() {
   const router = useRouter();
 
   return (
-    <View className="flex-1 bg-gray-100">
+    <View className="flex-1 py-10 bg-gray-100">
       <ScrollView
         className="flex-1"
         contentContainerStyle={{
@@ -17,11 +17,27 @@ export default function ConnectNotificationsScreen() {
         }}
         showsVerticalScrollIndicator={false}
       >
+        {/* Back Button */}
+        <TouchableOpacity
+          className="mb-6 w-10 h-10 justify-center"
+          onPress={() => router.back()}
+        >
+          <Text className="text-3xl text-gray-900 font-light">←</Text>
+        </TouchableOpacity>
+
+        {/* Progress Bar */}
+        <View className="mb-8">
+          <View className="h-2 bg-gray-200 rounded-full">
+            <View
+              className="h-2 bg-green-500 rounded-full"
+              style={{ width: "66%" }}
+            />
+          </View>
+        </View>
         {/* Title */}
-        <Text className="text-3xl font-bold text-[#111827] mb-8 text-center">
+        <Text className="text-3xl justify-start font-bold text-black mb-8">
           Connect your Notifications
         </Text>
-
         {/* Diagram Container */}
         <View className="items-center justify-center mb-8">
           <View className="relative w-full h-64">
@@ -65,13 +81,11 @@ export default function ConnectNotificationsScreen() {
             />
           </View>
         </View>
-
         {/* Description Text */}
         <Text className="text-base text-gray-600 mb-8 text-center leading-6">
           Sync your notifications with Capto to ensure you are always getting
           reminders to input your daily teachings
         </Text>
-
         {/* Continue Button */}
         <View className="mb-4">
           <Button
@@ -81,7 +95,6 @@ export default function ConnectNotificationsScreen() {
             }}
           />
         </View>
-
         {/* Not Now Link */}
         <TouchableOpacity
           onPress={() => {

@@ -66,8 +66,10 @@ export default function Index() {
         </View>
       </View>
       {/* Modal View for the user needs */}
+      <View></View>
       <Modal
         visible={modal}
+        animationType="slide" // or "fade"
         transparent={true} //so you can still see the background
         onRequestClose={() => setModal(false)} //modal closes if the User uses the ios swipe feature to escape
       >

@@ -10,7 +10,7 @@ export default function FreeTrialScreen() {
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionType>("yearly");
 
   return (
-    <View className="flex-1 bg-gray-100">
+    <View className="flex-1 py-10 bg-gray-100">
       <ScrollView
         className="flex-1"
         contentContainerStyle={{
@@ -34,7 +34,7 @@ export default function FreeTrialScreen() {
           <View className="h-2 bg-gray-200 rounded-full">
             <View
               className="h-2 bg-green-500 rounded-full"
-              style={{ width: "95%" }}
+              style={{ width: "99%" }}
             />
           </View>
         </View>
