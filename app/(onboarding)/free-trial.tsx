@@ -28,7 +28,6 @@ export default function FreeTrialScreen() {
         >
           <Text className="text-3xl text-gray-900 font-light">←</Text>
         </TouchableOpacity>
-
         {/* Progress Bar */}
         <View className="mb-8">
           <View className="h-2 bg-gray-200 rounded-full">
@@ -38,12 +37,10 @@ export default function FreeTrialScreen() {
             />
           </View>
         </View>
-
         {/* Title */}
         <Text className="text-3xl font-bold text-[#111827] mb-8">
           Capto is FREE for your first month.
         </Text>
-
         {/* Timeline */}
         <View className="mb-8">
           <View className="flex-row">
@@ -81,6 +78,9 @@ export default function FreeTrialScreen() {
             </View>
           </View>
         </View>
+
+        {/* Spacer to push subscription options down */}
+        <View className="flex-1" />
 
         {/* Subscription Options */}
         <View className="flex-row gap-4 mb-4">
@@ -138,14 +138,12 @@ export default function FreeTrialScreen() {
             </View>
           </TouchableOpacity>
         </View>
-
         {/* No Payment Text */}
         <Text className="text-center text-gray-600 mb-8">
           No payment needed now
         </Text>
-
         {/* Try Free Button */}
-        <View className="mb-4">
+        <View className="mb-4 absolute bottom-10 left-5 right-5">
           <Button
             text="Try 1 Month Free"
             className="bg-black"

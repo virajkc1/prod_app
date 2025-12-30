@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
 import { useRouter } from "expo-router";
 import Button from "@/components/onboarding/Button";
 
@@ -35,61 +35,33 @@ export default function ConnectNotificationsScreen() {
           </View>
         </View>
         {/* Title */}
-        <Text className="text-3xl justify-start font-bold text-black mb-8">
+        <Text className="text-3xl justify-start font-bold text-black mb-12">
           Connect your Notifications
         </Text>
-        {/* Diagram Container */}
-        <View className="items-center justify-center mb-8">
-          <View className="relative w-full h-64">
-            {/* Logo Box (Bottom Left) */}
-            <View
-              className="absolute bg-gray-200 rounded-lg p-4 items-center justify-center"
-              style={{
-                left: "10%",
-                bottom: "20%",
-                width: 100,
-                height: 80,
-              }}
-            >
-              <Text className="text-gray-900 font-semibold">Logo</Text>
-            </View>
 
-            {/* Apple Notis Box (Top Right) */}
-            <View
-              className="absolute bg-gray-200 rounded-lg p-4 items-center justify-center"
-              style={{
-                right: "10%",
-                top: "20%",
-                width: 100,
-                height: 80,
-              }}
-            >
-              <Text className="text-gray-900 font-semibold">Apple Notis</Text>
-            </View>
-
-            {/* Diagonal Connection Line */}
-            <View
-              className="absolute bg-gray-900"
-              style={{
-                left: "35%",
-                top: "45%",
-                width: "30%",
-                height: 3,
-                transform: [{ rotate: "-45deg" }],
-                transformOrigin: "center",
-              }}
+        {/* Bell Icon */}
+        <View className="flex-1 justify-center items-center mb-24">
+          <View className="w-64 h-64 rounded-full bg-gray-200/30 items-center justify-center">
+            <Image
+              source={require("@/assets/images/bell.png")}
+              style={{ width: 250, height: 250 }}
+              resizeMode="contain"
             />
           </View>
+          <Text className="text-xl mt-10 text-gray-600 mb-8 text-center gap-3leading-6">
+            Sync your notifications to always get reminders to input your daily
+            teachings
+          </Text>
         </View>
+
         {/* Description Text */}
-        <Text className="text-base text-gray-600 mb-8 text-center leading-6">
-          Sync your notifications with Capto to ensure you are always getting
-          reminders to input your daily teachings
-        </Text>
+
         {/* Continue Button */}
-        <View className="mb-4">
+        <View className="absolute bottom-16 left-5 right-5">
           <Button
             text="Continue"
+            className="bg-blue-500"
+            textColor="text-white"
             onPress={() => {
               router.push("/give-rating");
             }}
@@ -101,7 +73,7 @@ export default function ConnectNotificationsScreen() {
             // Skip notification setup
             router.push("/give-rating");
           }}
-          className="items-center py-4"
+          className="items-center py-4 absolute bottom-0 left-5 right-5"
         >
           <Text className="text-gray-600 text-base">Not Now</Text>
         </TouchableOpacity>

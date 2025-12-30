@@ -37,26 +37,31 @@ export default function LongTermMemoryScreen() {
         </View>
 
         {/* Title */}
-        <Text className="text-3xl font-bold text-[#111827] mb-8">
+        <Text className="text-3xl font-bold text-[#111827] mb-4">
           Capto builds long term memory
         </Text>
 
         {/* Card */}
-        <View className="bg-white mt-4 flex-1 items-center justify-center rounded-xl mb-8">
+        <View className="flex-1 items-center justify-center mb-8">
           <Image
             source={require("@/assets/images/capto-long-term.png")}
-            style={{ width: "100%", height: 300, resizeMode: "contain" }}
+            style={{
+              width: "100%",
+              height: 300,
+              resizeMode: "cover",
+            }}
           />
         </View>
 
         {/* Continue Button */}
-        <View className="flex-1 justify-end mb-10">
+        <View className="absolute bottom-10 left-5 right-5">
           <Button
             text="Continue"
+            className="bg-blue-500"
+            textColor="text-white"
             onPress={() => {
               router.push("/connect-notifications");
             }}
-            textColor="text-white"
           />
         </View>
       </ScrollView>

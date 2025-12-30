@@ -1,7 +1,7 @@
 import { useRouter } from "expo-router";
-import { Text, TouchableOpacity, View, ScrollView } from "react-native";
+import { Text, TouchableOpacity, View, ScrollView, Image } from "react-native";
 import Button from "@/components/onboarding/Button";
-
+import { AntDesign } from "@expo/vector-icons";
 export default function CreateAccountScreen() {
   const router = useRouter();
 
@@ -53,11 +53,18 @@ export default function CreateAccountScreen() {
           <View className="w-full max-w-md">
             <Button
               text="Sign in with Apple"
+              icon={<AntDesign name="apple" size={20} color="white" />}
               className="mb-3 bg-black rounded-3xl"
               onPress={() => {}}
               textColor="text-white"
             />
             <Button
+              icon={
+                <Image
+                  source={require("@/assets/images/google-icon.png")}
+                  style={{ width: 20, height: 20 }}
+                />
+              }
               text="Sign in with Google"
               className="bg-transparent rounded-3xl border border-gray-300"
               onPress={() => {}}
@@ -66,15 +73,13 @@ export default function CreateAccountScreen() {
           </View>
         </View>
         {/* Continue Button */}
-        <View className="mb-10">
-          <View>
-            <Button
-              text="Continue"
-              className="bg-blue-500"
-              textColor="text-white"
-              onPress={handleContinue}
-            />
-          </View>
+        <View className="absolute bottom-10 left-5 right-5">
+          <Button
+            text="Continue"
+            className="bg-blue-500"
+            textColor="text-white"
+            onPress={handleContinue}
+          />
         </View>
       </ScrollView>
     </View>

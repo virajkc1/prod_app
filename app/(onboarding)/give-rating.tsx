@@ -57,7 +57,6 @@ export default function GiveRatingScreen() {
         >
           <Text className="text-3xl text-gray-900 font-light">←</Text>
         </TouchableOpacity>
-
         {/* Progress Bar */}
         <View className="mb-8">
           <View className="h-2 bg-gray-200 rounded-full">
@@ -71,7 +70,6 @@ export default function GiveRatingScreen() {
         <Text className="text-3xl font-bold text-[#111827] mb-6">
           Give us a rating
         </Text>
-
         {/* Rating Display Section */}
         <View className="mb-6">
           <View className="flex-row items-center mb-4">
@@ -95,7 +93,6 @@ export default function GiveRatingScreen() {
           {/* Separator Line */}
           <View className="h-px bg-gray-300" />
         </View>
-
         {/* Feedback Prompt */}
         <View className="mb-6">
           <Text className="text-2xl font-bold text-gray-800 text-center mb-2">
@@ -106,8 +103,7 @@ export default function GiveRatingScreen() {
             make
           </Text>
         </View>
-
-        {/* Review Input Fields */}
+        Review Input Fields
         <View className="mb-8">
           {reviews.map((review) => (
             <View
@@ -136,27 +132,27 @@ export default function GiveRatingScreen() {
             </View>
           ))}
         </View>
-
         {/* Finish Button */}
         <View className="mb-4">
           <Button
-            text="Finish"
+            text="Continue"
+            className="bg-blue-500"
+            textColor="text-white"
             onPress={() => {
               // Navigate to next screen or complete onboarding
               router.push("/free-trial");
             }}
           />
         </View>
-
         {/* Not Now Link */}
         <TouchableOpacity
           onPress={() => {
             // Skip rating
             router.push("/free-trial");
           }}
-          className="items-center py-4"
+          className="items-center py-2 "
         >
-          <Text className="text-gray-600 text-base">Not Now</Text>
+          <Text className="text-gray-600 text-base mb-1">Not Now</Text>
         </TouchableOpacity>
       </ScrollView>
     </View>
