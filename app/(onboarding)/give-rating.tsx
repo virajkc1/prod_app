@@ -1,45 +1,30 @@
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  TextInput,
-} from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
 import { useRouter } from "expo-router";
 import Button from "@/components/onboarding/Button";
+import { useState } from "react";
 
 export default function GiveRatingScreen() {
   const router = useRouter();
+  const [selectedRating, setSelectedRating] = useState(0);
 
-  const reviews = [
-    {
-      id: 1,
-      name: "Viraj Chapaneri",
-      rating: 5,
-      text: "Hello testing testing this will be a review soon when i decide to create more reviews and develop this page",
-    },
-    {
-      id: 2,
-      name: "Viraj Chapaneri",
-      rating: 5,
-      text: "Hello testing testing this will be a review soon when i decide to create more reviews and develop this page",
-    },
-  ];
-
-  const renderStars = (count: number) => {
+  const renderStars = () => {
     return (
-      <View className="flex-row">
-        {[...Array(count)].map((_, i) => (
-          <Text key={i} className="text-yellow-500 text-lg">
-            ★
-          </Text>
+      <View className="flex-row gap-2">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <TouchableOpacity key={star} onPress={() => setSelectedRating(star)}>
+            <Text
+              className={`text-5xl ${star <= selectedRating ? "text-orange-400" : "text-gray-300"}`}
+            >
+              ★
+            </Text>
+          </TouchableOpacity>
         ))}
       </View>
     );
   };
 
   return (
-    <View className="flex-1 py-10 bg-gray-100">
+    <View className="flex-1 py-10 bg-white">
       <ScrollView
         className="flex-1"
         contentContainerStyle={{
@@ -57,6 +42,7 @@ export default function GiveRatingScreen() {
         >
           <Text className="text-3xl text-gray-900 font-light">←</Text>
         </TouchableOpacity>
+
         {/* Progress Bar */}
         <View className="mb-8">
           <View className="h-2 bg-gray-200 rounded-full">
@@ -66,93 +52,74 @@ export default function GiveRatingScreen() {
             />
           </View>
         </View>
+
         {/* Title */}
-        <Text className="text-3xl font-bold text-[#111827] mb-6">
+        <Text className="text-3xl font-bold text-[#111827] mb-2">
           Give us a rating
         </Text>
-        {/* Rating Display Section */}
-        <View className="mb-6">
-          <View className="flex-row items-center mb-4">
-            {/* Trophy Icon */}
-            <View className="w-16 h-16 bg-white rounded-full items-center justify-center mr-4">
-              <Text className="text-3xl">🏆</Text>
-            </View>
+        <Text className="text-lg font-light text-[#111827] ">
+          Please be our first <Text className="font-bold">100 users</Text> to
+          rate us!
+        </Text>
 
-            {/* Rating Info */}
-            <View className="flex-1">
-              <Text className="text-xl font-bold text-gray-900 mb-1">
-                5 Stars
-              </Text>
-              {renderStars(5)}
-              <Text className="text-sm text-gray-500 mt-1">
-                1K+ App Ratings
-              </Text>
-            </View>
-          </View>
+        {/* Spacer */}
+        <View className="flex-1" />
 
-          {/* Separator Line */}
-          <View className="h-px bg-gray-300" />
+        {/* Icon */}
+        <View className="items-center mb-36">
+          {/* <Image
+            source={require("@/assets/images/capto_mascot.png ")}
+            style={{ width: 100, height: 100 }}
+            resizeMode="contain"
+          /> */}
         </View>
-        {/* Feedback Prompt */}
-        <View className="mb-6">
-          <Text className="text-2xl font-bold text-gray-800 text-center mb-2">
-            We need you to help us improve
-          </Text>
-          <Text className="text-base text-gray-600 text-center">
-            Please give us honest feedback on the app & any improvements we can
-            make
-          </Text>
-        </View>
-        Review Input Fields
-        <View className="mb-8">
-          {reviews.map((review) => (
-            <View
-              key={review.id}
-              className="bg-white rounded-xl p-4 mb-4 border border-gray-200"
-            >
-              <View className="flex-row items-start mb-3">
-                {/* Profile Picture Placeholder */}
-                <View className="w-12 h-12 bg-gray-300 rounded-full mr-3" />
 
-                {/* Name and Stars */}
-                <View className="flex-1">
-                  <View className="flex-row justify-between items-center mb-2">
-                    <Text className="text-base font-semibold text-gray-900">
-                      {review.name}
-                    </Text>
-                    {renderStars(review.rating)}
-                  </View>
+        {/* Title */}
+        <Text className="text-xl font-semibold text-gray-900 text-center">
+          Hey Buddy,
+        </Text>
+        <Text className="text-xl font-semibold text-gray-900 text-center mb-6">
+          Enjoying Capto so far?
+        </Text>
 
-                  {/* Review Text */}
-                  <Text className="text-sm text-gray-600 leading-5">
-                    {review.text}
-                  </Text>
-                </View>
-              </View>
-            </View>
-          ))}
-        </View>
-        {/* Finish Button */}
+        {/* Subtitle */}
+        <Text className="text-base text-gray-600 text-center mb-8">
+          Please rate your experience with us
+        </Text>
+
+        {/* Stars */}
+        <View className="items-center mb-12">{renderStars()}</View>
+
+        {/* Bottom Text */}
+        <Text className="text-base font-semibold text-gray-900 text-center mb-2"></Text>
+        <Text className="text-sm text-gray-600 text-center mb-4"></Text>
+
+        {/* Spacer */}
+        <View className="flex-1" />
+
+        {/* Extra spacing */}
+        <View className="h-32" />
+
+        {/* Continue Button */}
         <View className="mb-4">
           <Button
             text="Continue"
             className="bg-blue-500"
             textColor="text-white"
             onPress={() => {
-              // Navigate to next screen or complete onboarding
               router.push("/free-trial");
             }}
           />
         </View>
+
         {/* Not Now Link */}
         <TouchableOpacity
           onPress={() => {
-            // Skip rating
             router.push("/free-trial");
           }}
-          className="items-center py-2 "
+          className="items-center py-2"
         >
-          <Text className="text-gray-600 text-base mb-1">Not Now</Text>
+          <Text className="text-gray-600 text-base">Not Now</Text>
         </TouchableOpacity>
       </ScrollView>
     </View>

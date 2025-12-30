@@ -39,7 +39,7 @@ export default function FreeTrialScreen() {
         </View>
         {/* Title */}
         <Text className="text-3xl font-bold text-[#111827] mb-8">
-          Capto is FREE for your first month.
+          Choose your CAPTO plan
         </Text>
         {/* Timeline */}
         <View className="mb-8">
@@ -121,8 +121,8 @@ export default function FreeTrialScreen() {
             }`}
           >
             <View className="flex-row items-center justify-between">
-              <Text className="text-base font-semibold text-gray-900">
-                Yearly
+              <Text className="text-base font-semibold text-orange-500">
+                Premium
               </Text>
               <View
                 className={`w-5 h-5 rounded-full border-2 items-center justify-center ${
@@ -139,9 +139,9 @@ export default function FreeTrialScreen() {
           </TouchableOpacity>
         </View>
         {/* No Payment Text */}
-        <Text className="text-center text-gray-600 mb-8">
+        {/* <Text className="text-center text-gray-600 mb-8">
           No payment needed now
-        </Text>
+        </Text> */}
         {/* Try Free Button */}
         <View className="mb-4 absolute bottom-10 left-5 right-5">
           <Button
@@ -154,11 +154,6 @@ export default function FreeTrialScreen() {
             }}
           />
         </View>
-
-        {/* Price Text */}
-        <Text className="text-center text-gray-500 text-sm mb-8">
-          Just £1.99 a month
-        </Text>
       </ScrollView>
     </View>
   );
