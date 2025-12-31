@@ -245,8 +245,6 @@ export default function CreatePostScreen() {
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View className="px-5 pt-4">
-          <Text className="text-sm text-gray-600 mb-2">Create Post Page</Text>
-
           <View className="flex-row items-center justify-center">
             <TouchableOpacity
               onPress={() => router.back()}

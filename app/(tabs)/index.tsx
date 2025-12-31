@@ -133,6 +133,20 @@ export default function WelcomePage() {
     });
   };
 
+  const handleViewPost = (post: Post) => {
+    //Navigate to the post detail page
+    //params are the data thats passed to the next screen
+    router.push({
+      pathname: "/(tabs)/post-detail",
+      params: {
+        postId: post.id,
+        postTitle: post.title,
+        postDate: post.date,
+        postTopics: JSON.stringify(post.topics),
+      },
+    });
+  };
+
   // Map posts to lesson card format
   const lessons = posts.map((post) => ({
     id: post.id,
@@ -256,79 +270,105 @@ export default function WelcomePage() {
           {/* Lesson Cards */}
           {lessons.length > 0 ? (
             <View className="gap-4">
-              {lessons.map((lesson) => (
-                <View
-                  key={lesson.id}
-                  className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm"
-                >
-                  <View className="flex-row items-center justify-between mb-3">
-                    <Text className="text-lg font-semibold text-gray-900">
-                      {lesson.title}
-                    </Text>
-                    <Text className="text-xs text-gray-600">{lesson.date}</Text>
-                  </View>
+              {lessons.map((lesson) => {
+                const fullPost = posts.find((p) => p.id === lesson.id);
 
-                  {lesson.content.length > 0 && (
-                    <View className="mb-3 gap-1">
-                      {lesson.content.map((item, idx) => (
-                        <Text key={idx} className="text-sm text-gray-700">
-                          • {item}
+                return (
+                  <View
+                    key={lesson.id}
+                    className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm"
+                  >
+                    <TouchableOpacity
+                      activeOpacity={0.7}
+                      onPress={() => {
+                        if (fullPost) {
+                          router.push({
+                            pathname: "/(tabs)/post-detail",
+                            params: {
+                              postId: fullPost.id,
+                              postDate: fullPost.date,
+                              postTitle: fullPost.title,
+                              postTopics: JSON.stringify(fullPost.topics),
+                            },
+                          });
+                        }
+                      }}
+                    >
+                      <View className="flex-row items-center justify-between mb-3">
+                        <Text className="text-lg font-semibold text-gray-900">
+                          {lesson.title}
                         </Text>
-                      ))}
-                    </View>
-                  )}
-
-                  {/* Tags */}
-                  <View className="flex-row gap-2 mb-3 flex-wrap">
-                    {lesson.tags.map((tag, idx) => (
-                      <View
-                        key={idx}
-                        className={`${lesson.tagColors[idx]} px-3 py-1 rounded-full`}
-                      >
-                        <Text className="text-white text-xs font-medium">
-                          {tag}
+                        <Text className="text-xs text-gray-600">
+                          {lesson.date}
                         </Text>
                       </View>
-                    ))}
-                  </View>
 
-                  {/* Bottom Row - Edit and Delete Icons */}
-                  <View className="flex-row items-center justify-between ">
-                    {/* Edit Icon */}
-                    <TouchableOpacity
-                      onPress={() =>
-                        handleEditPost({
-                          id: lesson.id,
-                          title: lesson.title,
-                          date: lesson.date,
-                          topics:
-                            posts.find((p) => p.id === lesson.id)?.topics || [],
-                        })
-                      }
-                      className="p-2 rounded-full items-start"
-                      hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                    >
-                      <Ionicons
-                        name="create-outline"
-                        size={20}
-                        color="#3b82f6"
-                      />
+                      {lesson.content.length > 0 && (
+                        <View className="mb-3 gap-1">
+                          {lesson.content.map((item, idx) => (
+                            <Text key={idx} className="text-sm text-gray-700">
+                              • {item}
+                            </Text>
+                          ))}
+                        </View>
+                      )}
+
+                      {/* Tags */}
+                      <View className="flex-row gap-2 mb-3 flex-wrap">
+                        {lesson.tags.map((tag, idx) => (
+                          <View
+                            key={idx}
+                            className={`${lesson.tagColors[idx]} px-3 py-1 rounded-full`}
+                          >
+                            <Text className="text-white text-xs font-medium">
+                              {tag}
+                            </Text>
+                          </View>
+                        ))}
+                      </View>
                     </TouchableOpacity>
-                    {/* Delete Icon */}
-                    <TouchableOpacity
-                      onPress={() => handleDeletePost(lesson.id, lesson.title)}
-                      className="p-2 px-4 rounded-full active:bg-red-50"
-                      hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                    >
-                      <Ionicons
-                        name="trash-outline"
-                        size={20}
-                        color="#ef4444"
-                      />
-                    </TouchableOpacity>
+
+                    {/* Bottom Row - Edit and Delete Icons */}
+                    <View className="flex-row items-center justify-between ">
+                      {/* Edit Icon */}
+                      <TouchableOpacity
+                        onPress={() =>
+                          handleEditPost({
+                            id: lesson.id,
+                            title: lesson.title,
+                            date: lesson.date,
+                            topics:
+                              posts.find((p) => p.id === lesson.id)?.topics ||
+                              [],
+                          })
+                        }
+                        className="p-2 rounded-full items-start"
+                        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                      >
+                        <Ionicons
+                          name="create-outline"
+                          size={20}
+                          color="#3b82f6"
+                        />
+                      </TouchableOpacity>
+                      {/* Delete Icon */}
+                      <TouchableOpacity
+                        onPress={() =>
+                          handleDeletePost(lesson.id, lesson.title)
+                        }
+                        className="p-2 px-4 rounded-full active:bg-red-50"
+                        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                      >
+                        <Ionicons
+                          name="trash-outline"
+                          size={20}
+                          color="#ef4444"
+                        />
+                      </TouchableOpacity>
+                    </View>
                   </View>
-                </View>
-              ))}
+                );
+              })}
             </View>
           ) : (
             <View className="bg-white border border-gray-200 rounded-xl p-8 items-center">
