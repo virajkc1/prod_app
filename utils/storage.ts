@@ -108,6 +108,52 @@ const topicCheck = async (topicName: string): Promise<boolean> => {
   }
 };
 
+/*
+Delete Post Function
+Takes the postId as a parameter,
+filters out that post from all the posts by not including the post with that Id
+Saves the post async back to Async storage
+JSON.stringify needed 
+
+
+*/
+const deletePost = async (postId: string) => {
+  try {
+    const posts = await getPosts(); //this gets all the posts that we have
+    const updatedPosts = posts.filter((post) => post.id !== postId);
+    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedPosts));
+    //Async can only save data as text not as JS objects in local storage
+    //we save the data under a label eg: the STORAGE KEY
+    return true; //if successful
+  } catch (error) {
+    console.log("Error deleting post", error);
+    return false; // Return false if there was an error
+  }
+};
+
+/*
+Update Post Function
+Takes the updatedPost as a parameter,
+Finds the post with the matching ID and replaces it with the updatedPost
+Saves the post async back to Async storage
+JSON.stringify needed 
+
+*/
+const updatePost = async (updatedPost: Post): Promise<boolean> => {
+  try {
+    const posts = await getPosts();
+    //Find and replace the post with matching ID
+    const updatedPosts = posts.map((post) =>
+      post.id === updatedPost.id ? updatedPost : post
+    );
+    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedPosts));
+    return true;
+  } catch (error) {
+    console.log("Error updating post", error);
+    return false;
+  }
+};
+
 export {
   getPosts,
   savePosts,
@@ -116,4 +162,6 @@ export {
   getAllTopics,
   saveTopic,
   topicCheck,
+  deletePost,
+  updatePost,
 };

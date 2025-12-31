@@ -10,7 +10,7 @@ import {
 import SquaredPaperBackground from "@/components/SquaredPaperBackground";
 import { useState } from "react";
 import Button from "@/components/onboarding/Button";
-import { AntDesign, FontAwesome } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 
 //This is the home screen of the app
 export default function Index() {
@@ -36,7 +36,6 @@ export default function Index() {
           />
         </View>
         <View className="flex- items-center justify-center p-5">
-          {" "}
           <Text className="text-3xl text-center text-gray-900 font-bold mb-2">
             Remember what you did every day
           </Text>

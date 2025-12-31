@@ -20,13 +20,6 @@ export default function RootLayout() {
         }}
       >
         <Stack.Screen
-          name="index"
-          options={{
-            title: "Home",
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
           name="(onboarding)"
           options={{
             headerShown: false,
@@ -35,13 +28,6 @@ export default function RootLayout() {
         <Stack.Screen
           name="(tabs)"
           options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="long-term-memory"
-          options={{
-            title: "Long Term Memory",
             headerShown: false,
           }}
         />

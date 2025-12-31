@@ -1,10 +1,11 @@
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useState, useCallback } from "react";
 import { useFocusEffect } from "expo-router";
-import { getPosts } from "@/app/utils/storage";
-import { Post } from "@/app/utils/types";
+import { getPosts, deletePost } from "@/utils/storage";
+import { Post } from "@/utils/types";
+import { useRouter } from "expo-router";
 
 // Color mapping for topics -Colors for topics
 const topicColors = [
@@ -27,6 +28,8 @@ const getTopicColor = (topic: string): string => {
 };
 
 export default function WelcomePage() {
+  const router = useRouter(); //useRouter is a hook that allows you to navigate to a new screen
+
   const userName = "Dan";
   const streakDays = 5;
   const [posts, setPosts] = useState<Post[]>([]); //State to store the posts
@@ -86,6 +89,49 @@ export default function WelcomePage() {
     { day: "Thu", date: 18 },
     { day: "Fri", date: 19 },
   ];
+
+  //Delete Post Function
+  const handleDeletePost = (postId: string, postTitle: string) => {
+    //Show confirmation to delete the post
+    Alert.alert(
+      "Delete Post",
+      `Are you sure you want to delete "${postTitle}"?`,
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            const success = await deletePost(postId);
+            if (success) {
+              // Reload posts to update the UI
+              await loadPosts();
+            } else {
+              Alert.alert("Error", "Failed to delete post. Please try again.");
+            }
+          },
+        },
+      ]
+    );
+  };
+  //params are the data thats passed to the next screen when editing a post
+  const handleEditPost = (post: Post) => {
+    //Navigate to the create a post page
+    //params are the data thats passed to the next screen
+    router.push({
+      pathname: "/(tabs)/create-post",
+      params: {
+        mode: "edit",
+        postId: post.id,
+        postTitle: post.title,
+        postDate: post.date,
+        postTopics: JSON.stringify(post.topics),
+      },
+    });
+  };
 
   // Map posts to lesson card format
   const lessons = posts.map((post) => ({
@@ -246,12 +292,41 @@ export default function WelcomePage() {
                     ))}
                   </View>
 
-                  {/* Expand Button */}
-                  <TouchableOpacity className="self-start">
-                    <Text className="text-blue-600 text-sm font-medium">
-                      Expand
-                    </Text>
-                  </TouchableOpacity>
+                  {/* Bottom Row - Edit and Delete Icons */}
+                  <View className="flex-row items-center justify-between ">
+                    {/* Edit Icon */}
+                    <TouchableOpacity
+                      onPress={() =>
+                        handleEditPost({
+                          id: lesson.id,
+                          title: lesson.title,
+                          date: lesson.date,
+                          topics:
+                            posts.find((p) => p.id === lesson.id)?.topics || [],
+                        })
+                      }
+                      className="p-2 rounded-full items-start"
+                      hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                    >
+                      <Ionicons
+                        name="create-outline"
+                        size={20}
+                        color="#3b82f6"
+                      />
+                    </TouchableOpacity>
+                    {/* Delete Icon */}
+                    <TouchableOpacity
+                      onPress={() => handleDeletePost(lesson.id, lesson.title)}
+                      className="p-2 px-4 rounded-full active:bg-red-50"
+                      hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                    >
+                      <Ionicons
+                        name="trash-outline"
+                        size={20}
+                        color="#ef4444"
+                      />
+                    </TouchableOpacity>
+                  </View>
                 </View>
               ))}
             </View>

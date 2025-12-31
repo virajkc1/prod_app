@@ -8,11 +8,17 @@ import {
   ActivityIndicator, //Loading spinner
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
+//useLocalSearchParams is a hook that allows you to get the parameters passed from the previous screen
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
-import { savePosts, hasPostToday, formatDate } from "@/app/utils/storage"; //helper functions
-import { Post, TopicBlock } from "@/app/utils/types"; //type for the post
+import {
+  savePosts,
+  hasPostToday,
+  formatDate,
+  updatePost,
+} from "@/utils/storage"; //helper functions
+import { Post, TopicBlock } from "@/utils/types"; //type for the post
 
 //interface to validate the form entry
 interface validateError {
@@ -24,10 +30,29 @@ interface validateError {
 //functional component to create a post
 export default function CreatePostScreen() {
   const router = useRouter(); //useRouter is a webhook to navigate between screens
-  const [title, setTitle] = useState<string>(""); //title of the post
+  const params = useLocalSearchParams(); //get parameters passed from previous screen
+
+  // Check if we're in edit mode by checking if mode param exists
+  const isEditMode = params.mode === "edit";
+  const postId = params.postId as string; //get the post ID if editing
+  const postDate = params.postDate as string; //get original date if editing
+
+  const [title, setTitle] = useState<string>(
+    isEditMode ? (params.postTitle as string) : ""
+  ); //title of the post
+
+  // Parse topics from params if editing - convert JSON string back to array
+  const initialTopics: TopicBlock[] =
+    isEditMode && params.postTopics
+      ? JSON.parse(params.postTopics as string).map((topic: TopicBlock) => ({
+          ...topic,
+          id: topic.id || Date.now().toString(),
+        }))
+      : [];
 
   // Array of topic blocks - starts empty, user clicks "Add Topic" to add blocks
-  const [topicBlocks, setTopicBlocks] = useState<TopicBlock[]>([]); // Option A: Empty array
+  const [topicBlocks, setTopicBlocks] = useState<TopicBlock[]>(initialTopics);
+  // Option A: Empty array
 
   const [errors, setErrors] = useState<validateError>({}); // errors of the form
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false); // loading state eg: loading spinner
@@ -129,20 +154,22 @@ export default function CreatePostScreen() {
       return;
     }
 
-    // Check daily post limit
-    const postExistsToday = await hasPostToday();
-    if (postExistsToday) {
-      Alert.alert(
-        "Daily Limit Reached",
-        "You can only create one post per day. Please come back tomorrow!",
-        [
-          {
-            text: "OK",
-            onPress: () => router.back(),
-          },
-        ]
-      );
-      return;
+    // Only check daily limit if creating new post (not editing)
+    if (!isEditMode) {
+      const postExistsToday = await hasPostToday();
+      if (postExistsToday) {
+        Alert.alert(
+          "Daily Limit Reached",
+          "You can only create one post per day. Please come back tomorrow!",
+          [
+            {
+              text: "OK",
+              onPress: () => router.back(),
+            },
+          ]
+        );
+        return;
+      }
     }
 
     setIsSubmitting(true);
@@ -159,31 +186,55 @@ export default function CreatePostScreen() {
         };
       });
 
-      // Generate post ID and date
-      const postId = Date.now().toString();
-      const postDate = formatDate(new Date());
+      if (isEditMode) {
+        // ============ UPDATE EXISTING POST ============
+        const updatedPost: Post = {
+          id: postId, // Keep same ID
+          title: title.trim(),
+          topics: cleanedTopics,
+          date: postDate, // Keep original date - this is the key requirement
+        };
 
-      // Create Post object
-      const newPost: Post = {
-        id: postId,
-        title: title.trim(),
-        topics: cleanedTopics,
-        date: postDate,
-      };
+        const success = await updatePost(updatedPost);
 
-      // Save post
-      await savePosts([newPost]);
+        if (success) {
+          Alert.alert("Success", "Post updated successfully!", [
+            {
+              text: "OK",
+              onPress: () => router.back(),
+            },
+          ]);
+        } else {
+          Alert.alert("Error", "Failed to update post. Please try again.");
+        }
+      } else {
+        // ============ CREATE NEW POST ============
+        // Generate post ID and date
+        const postId = Date.now().toString();
+        const postDate = formatDate(new Date());
 
-      // Show success message
-      Alert.alert("Success", "Post created successfully!", [
-        {
-          text: "OK",
-          onPress: () => router.back(),
-        },
-      ]);
+        // Create Post object
+        const newPost: Post = {
+          id: postId,
+          title: title.trim(),
+          topics: cleanedTopics,
+          date: postDate,
+        };
+
+        // Save post
+        await savePosts([newPost]);
+
+        // Show success message
+        Alert.alert("Success", "Post created successfully!", [
+          {
+            text: "OK",
+            onPress: () => router.back(),
+          },
+        ]);
+      }
     } catch (error) {
-      console.error("Error creating post:", error);
-      Alert.alert("Error", "Failed to create post. Please try again.");
+      console.error("Error saving post:", error);
+      Alert.alert("Error", "Failed to save post. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -204,7 +255,7 @@ export default function CreatePostScreen() {
               <Ionicons name="arrow-back" size={24} color="#111827" />
             </TouchableOpacity>
             <Text className="text-2xl font-bold text-gray-900">
-              Create a Post
+              {isEditMode ? "Edit Post" : "Create a Post"}
             </Text>
           </View>
         </View>
@@ -341,7 +392,9 @@ export default function CreatePostScreen() {
             {isSubmitting ? (
               <ActivityIndicator color="#111827" />
             ) : (
-              <Text className="text-gray-900 text-lg font-bold">Submit</Text>
+              <Text className="text-gray-900 text-lg font-bold">
+                {isEditMode ? "Update" : "Submit"}
+              </Text>
             )}
           </TouchableOpacity>
         </View>
