@@ -18,7 +18,7 @@ const topicColors = [
 const getTopicColor = (topic: string): string => {
   let hash = 0;
   //Hash each letter in the string
-  for (let i = 0; i < topic.length; i + 2) {
+  for (let i = 0; i < topic.length; i++) {
     hash = topic.charCodeAt(i) + hash * 31; //converts the character to a number and adds hah * 31 to it
     //31 is a prime number that helps distribute the hash values evenly
   }
@@ -36,6 +36,8 @@ export default function TopicsScreen() {
   //useCallback used for memoization, so we dont recreate on each render
 
   const loadPosts = useCallback(async () => {
+    //Debugging log
+
     //async function
     try {
       //catches any errors from await
@@ -45,15 +47,101 @@ export default function TopicsScreen() {
       //Count lessons per topic,
       loadedPosts.forEach((post) => {
         post.topics.forEach((topic) => {
-          const currCount = topicsMap.get(topic.topicName) || 0;
+          const currCount = topicsMap.get(topic.topicName) || 0; //tries getting the value from that topic else it doesnt exist so its 0
+          topicsMap.set(topic.topicName, currCount + topic.lessons.length); //sets the value to the topic name and the current count + number of lessons
         });
       });
-    } catch (error) {}
-  });
+      //Converting a Map into an array of UI objects - good practice
+
+      /*
+      Each of the key value pairs from the hash map , are mapped over
+      Array then stores an object for each entry with a topicName:topicName, totalLessons:totalLessons and a color which is taken from the 
+      getTopicColor function - passing the topicName as is hash function will calculate it
+      */
+
+      //.entries - returns an iterator over the key value pairs in the map
+      const topicsArray = Array.from(topicsMap.entries()).map(
+        ([topicName, totalLessons]) => ({
+          //array destructuring
+          topicName,
+          totalLessons,
+          color: getTopicColor(topicName),
+        })
+      );
+      //Sort alphabetically by topicName
+      topicsArray.sort((a, b) => a.topicName.localeCompare(b.topicName)); //inplace sorting
+      setTopicSummary(topicsArray);
+    } catch (error) {
+      console.error("Error loading posts:", error);
+    }
+  }, []);
+
+  //Load the posts when the screen is focused
+  useFocusEffect(
+    useCallback(() => {
+      loadPosts();
+    }, [loadPosts])
+  );
 
   return (
-    <SafeAreaView className="flex-1 bg-white items-center justify-center">
-      <Text className="text-xl font-semibold text-gray-900">Topics</Text>
+    <SafeAreaView className="flex-1 bg-gray-50">
+      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+        {/* Header */}
+        <View className="px-5 pt-6 pb-4">
+          <Text className="text-3xl font-bold text-gray-900">Topics</Text>
+          <Text className="text-sm text-gray-500 mt-1">
+            {topicSummary.length}{" "}
+            {topicSummary.length === 1 ? "topic" : "topics"}
+          </Text>
+        </View>
+
+        {/* Topics Grid */}
+        <View className="px-5 pb-6">
+          {topicSummary.length > 0 ? (
+            <View className="gap-3">
+              {topicSummary.map((topic, index) => (
+                <TouchableOpacity
+                  key={index}
+                  className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm"
+                  activeOpacity={0.7}
+                  onPress={() => {
+                    // Future: Navigate to topic detail page
+                  }}
+                >
+                  <View className="flex-row items-center justify-between">
+                    {/* Topic Name with Color Badge */}
+                    <View className="flex-1">
+                      <View
+                        className={`${topic.color} px-4 py-2 rounded-full self-start mb-2`}
+                      >
+                        <Text className="text-white text-sm font-semibold">
+                          {topic.topicName}
+                        </Text>
+                      </View>
+                      <Text className="text-gray-600 text-sm">
+                        {topic.totalLessons}{" "}
+                        {topic.totalLessons === 1 ? "lesson" : "lessons"}
+                      </Text>
+                    </View>
+
+                    {/* Arrow Icon */}
+                    <Text className="text-gray-400 text-2xl">›</Text>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+          ) : (
+            <View className="bg-white rounded-xl p-8 items-center">
+              <Text className="text-gray-500 text-base mb-2">
+                No topics yet
+              </Text>
+              <Text className="text-gray-400 text-sm text-center">
+                Create your first post to see topics here
+              </Text>
+            </View>
+          )}
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
