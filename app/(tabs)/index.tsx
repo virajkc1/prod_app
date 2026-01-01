@@ -305,11 +305,22 @@ export default function WelcomePage() {
 
                       {lesson.content.length > 0 && (
                         <View className="mb-3 gap-1">
-                          {lesson.content.map((item, idx) => (
-                            <Text key={idx} className="text-sm text-gray-700">
+                          {/* .slice is exclusive */}
+                          {lesson.content.slice(0, 3).map((item, idx) => (
+                            <Text
+                              key={idx}
+                              numberOfLines={1} // So each item is only 1 line
+                              ellipsizeMode="tail" //ends with a ... if its too long
+                              className="text-sm text-gray-700"
+                            >
                               • {item}
                             </Text>
                           ))}
+                          {lesson.content.length > 3 && (
+                            <Text className="text-xs text-gray-400 mt-1">
+                              +{lesson.content.length - 3} more lessons...
+                            </Text>
+                          )}
                         </View>
                       )}
 
