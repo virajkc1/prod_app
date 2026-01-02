@@ -66,15 +66,6 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="search"
-        options={{
-          title: "Search",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="search-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
         name="profile"
         options={{
           title: "Profile",
@@ -85,6 +76,18 @@ export default function TabLayout() {
       />
       <Tabs.Screen
         name="post-detail"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="topic-details"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="premium"
         options={{
           href: null,
         }}

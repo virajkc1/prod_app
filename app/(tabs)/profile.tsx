@@ -41,8 +41,30 @@ export default function ProfileScreen() {
       </View>
 
       <ScrollView className="flex-1 px-4 py-6">
+        <Text className="mb-4 font-semibold text-xl">Technical Support</Text>
+        {/* Add social media links here */}
+        <TouchableOpacity
+          className="bg-white rounded-lg p-4 mb-2 flex-row justify-between items-center"
+          onPress={() => {
+            /* open social media */
+          }}
+        >
+          <View>
+            {" "}
+            <Text className="text-sm font-medium text-gray-900">
+              Contact Us
+            </Text>
+            <Text className="text-xs pt-1 text-gray-500">
+              Contact us for any technical issue or feedback
+            </Text>
+          </View>
+          <View className="bg-gray-100 rounded-md px-4 py-2">
+            <Text className="text-sm font-medium">Contact</Text>
+          </View>
+        </TouchableOpacity>
+
         {/* Notifications Section */}
-        <SectionHeader title="Notifications" />
+        <Text className="mb-4 font-semibold text-xl">Notifications</Text>
         {/* Add your notification toggles here */}
         <SettingsRow
           label="Mobile push notifications"
@@ -57,7 +79,7 @@ export default function ProfileScreen() {
           }
         />
         <SettingsRow
-          label="Mobile push notifications"
+          label="Email push notifications"
           subtitle="Receive notifications daily for new or old topics"
           rightElement={
             <Switch
@@ -68,28 +90,26 @@ export default function ProfileScreen() {
             />
           }
         />
-
         {/* Appearance Section */}
         <View className="mt-6">
-          <SectionHeader title="Appearance" />
+          <Text className="mb-4 font-semibold text-xl">Appearance</Text>
           {/* Add your appearance toggle here */}
         </View>
         <SettingsRow
-          label="Mobile push notifications"
-          subtitle="Receive notifications daily for new or old topics"
+          label="Display Appearance"
+          subtitle="Choose light mode or dark mode "
           rightElement={
             <Switch
-              value={mobilePush}
-              onValueChange={setMobilePush}
+              value={isDarkMode}
+              onValueChange={setIsDarkMode}
               trackColor={{ false: "#d1d5db", true: "#93c5fd" }}
-              thumbColor={mobilePush ? "#3b82f6" : "#f4f4f5"}
+              thumbColor={isDarkMode ? "#3b82f6" : "#f4f4f5"}
             />
           }
         />
-
         {/* Account Section */}
         <View className="mt-6">
-          <SectionHeader title="Account" />
+          <Text className="mb-4 font-semibold text-xl">Account</Text>
           {/* Add username, logout, delete account here */}
           <TouchableOpacity
             className="bg-white rounded-lg p-4 mb-2 flex-row justify-between items-center"
@@ -98,7 +118,27 @@ export default function ProfileScreen() {
             }}
           >
             <View>
-              <Text className="text-sm font-medium text-gray-900">Logout</Text>
+              <Text className="text-sm font-medium text-gray-900">
+                Change Username
+              </Text>
+              <Text className="text-xs text-gray-500">
+                Change your name on this device
+              </Text>
+            </View>
+            <View className="bg-gray-100 rounded-md px-4 py-2">
+              <Text className="text-sm font-medium text-center ">Change </Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            className="bg-white rounded-lg p-4 mb-2 flex-row justify-between items-center"
+            onPress={() => {
+              /* handle logout */
+            }}
+          >
+            <View>
+              <Text className="text-sm font-medium text-gray-900 ">
+                Log out
+              </Text>
               <Text className="text-xs text-gray-500">
                 Log out of your account here
               </Text>
@@ -114,36 +154,21 @@ export default function ProfileScreen() {
             }}
           >
             <View>
-              <Text className="text-sm font-medium text-gray-900">Logout</Text>
+              <Text className="text-sm font-medium text-gray-900">
+                Delete Account
+              </Text>
               <Text className="text-xs text-gray-500">
-                Log out of your account here
+                Delete your account here
               </Text>
             </View>
-            <View className="bg-gray-100 rounded-md px-4 py-2">
-              <Text className="text-sm font-medium">Logout</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity
-            className="bg-white rounded-lg p-4 mb-2 flex-row justify-between items-center"
-            onPress={() => {
-              /* handle logout */
-            }}
-          >
-            <View>
-              <Text className="text-sm font-medium text-gray-900">Logout</Text>
-              <Text className="text-xs text-gray-500">
-                Log out of your account here
-              </Text>
-            </View>
-            <View className="bg-gray-100 rounded-md px-4 py-2">
-              <Text className="text-sm font-medium">Logout</Text>
+            <View className="bg-transparent border-red-500 border-[1px] rounded-md px-4 py-2">
+              <Text className="text-sm text-red-500 font-medium">Delete</Text>
             </View>
           </TouchableOpacity>
         </View>
-
         {/* Support & Legal Section */}
         <View className="mt-6">
-          <SectionHeader title="Support & Legal" />
+          <Text className="mb-4 font-semibold text-xl">Legal</Text>
           {/* Add terms and privacy policy links here */}
           <TouchableOpacity
             className="bg-white rounded-lg p-4 mb-2 flex-row justify-between items-center"
@@ -151,9 +176,11 @@ export default function ProfileScreen() {
               /* open social media */
             }}
           >
-            <Text className="text-sm font-medium text-gray-900">Instagram</Text>
-            <View className="bg-gray-100 rounded-md px-4 py-2">
-              <Text className="text-sm font-medium">Open</Text>
+            <Text className="text-sm font-medium text-gray-900">
+              Terms & Conditions
+            </Text>
+            <View className="bg-transparent border border-gray-300 rounded-md px-4 py-2">
+              <Text className="text-sm  font-medium">View</Text>
             </View>
           </TouchableOpacity>
           <TouchableOpacity
@@ -162,16 +189,17 @@ export default function ProfileScreen() {
               /* open social media */
             }}
           >
-            <Text className="text-sm font-medium text-gray-900">Instagram</Text>
-            <View className="bg-gray-100 rounded-md px-4 py-2">
-              <Text className="text-sm font-medium">Open</Text>
+            <Text className="text-sm font-medium text-gray-900">
+              Privacy Policy
+            </Text>
+            <View className="bg-transparent border border-gray-300 rounded-md px-4 py-2">
+              <Text className="text-sm  font-medium">View</Text>
             </View>
           </TouchableOpacity>
         </View>
-
         {/* Follow Us Section */}
         <View className="mt-6">
-          <SectionHeader title="Follow Us" />
+          <Text className="mb-4 font-semibold text-xl">Follow Us</Text>
           {/* Add social media links here */}
           <TouchableOpacity
             className="bg-white rounded-lg p-4 mb-2 flex-row justify-between items-center"
@@ -190,7 +218,7 @@ export default function ProfileScreen() {
               /* open social media */
             }}
           >
-            <Text className="text-sm font-medium text-gray-900">Instagram</Text>
+            <Text className="text-sm font-medium text-gray-900">TikTok</Text>
             <View className="bg-gray-100 rounded-md px-4 py-2">
               <Text className="text-sm font-medium">Open</Text>
             </View>
@@ -201,7 +229,7 @@ export default function ProfileScreen() {
               /* open social media */
             }}
           >
-            <Text className="text-sm font-medium text-gray-900">Instagram</Text>
+            <Text className="text-sm font-medium text-gray-900">X</Text>
             <View className="bg-gray-100 rounded-md px-4 py-2">
               <Text className="text-sm font-medium">Open</Text>
             </View>

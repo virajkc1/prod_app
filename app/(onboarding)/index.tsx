@@ -1,3 +1,4 @@
+//MUST REMOVE THE ONPRESS TO INDEX ONCE CREATED
 import { useRouter } from "expo-router";
 import {
   Text,
@@ -100,7 +101,9 @@ export default function Index() {
                   />
                 }
                 text="Sign in with Google"
-                onPress={() => {}}
+                onPress={() => {
+                  router.push("/(tabs)");
+                }}
                 className="bg-gray-200 mb-10"
                 textColor="text-black"
               />

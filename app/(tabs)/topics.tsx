@@ -1,7 +1,7 @@
 import { View, Text, ScrollView, TouchableOpacity } from "react-native"; //for the UI
 import { SafeAreaView } from "react-native-safe-area-context"; //for the safe area
 import { useState, useCallback } from "react"; //for state management and lifecycle hooks
-import { useFocusEffect } from "expo-router"; //reloads the data when the screen is focused
+import { useFocusEffect, useRouter } from "expo-router"; //reloads the data when the screen is focused
 import { getPosts } from "@/utils/storage"; //for the posts helper function
 import { Post } from "@/utils/types"; //interface for the post
 
@@ -27,6 +27,7 @@ const getTopicColor = (topic: string): string => {
 };
 
 export default function TopicsScreen() {
+  const router = useRouter();
   const [posts, setPosts] = useState<Post[]>([]);
   const [topicSummary, setTopicSummary] = useState<
     { topicName: string; totalLessons: number; color: string }[]
@@ -105,7 +106,12 @@ export default function TopicsScreen() {
                   className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm"
                   activeOpacity={0.7}
                   onPress={() => {
-                    // Future: Navigate to topic detail page
+                    router.push({
+                      pathname: "/(tabs)/topic-details",
+                      params: {
+                        topicName: topic.topicName,
+                      },
+                    });
                   }}
                 >
                   <View className="flex-row items-center justify-between">

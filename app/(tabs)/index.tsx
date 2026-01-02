@@ -35,6 +35,7 @@ export default function WelcomePage() {
   const [posts, setPosts] = useState<Post[]>([]); //State to store the posts
   const [topics, setTopics] = useState<{ name: string; color: string }[]>([]); //State to store the topics
   const [latestPost, setLatestPost] = useState<Post | null>(null); //State to store the latest post
+  const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest"); //State to store sort order (newest to oldest or oldest to newest)
 
   // Load posts function - defined with useCallback to maintain reference
   const loadPosts = useCallback(async () => {
@@ -65,6 +66,28 @@ export default function WelcomePage() {
       console.error("Error loading posts:", error);
     }
   }, []); // Empty deps - function doesn't depend on props/state
+
+  // Sort posts based on sortOrder state
+  const getSortedPosts = () => {
+    const sortedPosts = [...posts]; // Create a copy to avoid mutating state
+    sortedPosts.sort((a, b) => {
+      // Convert date strings (DD/MM/YYYY) to comparable format
+      const dateA = a.date.split("/").reverse().join("-"); // YYYY-MM-DD
+      const dateB = b.date.split("/").reverse().join("-"); // YYYY-MM-DD
+
+      if (sortOrder === "newest") {
+        return dateB.localeCompare(dateA); // Newest first (descending)
+      } else {
+        return dateA.localeCompare(dateB); // Oldest first (ascending)
+      }
+    });
+    return sortedPosts;
+  };
+
+  // Toggle sort order
+  const toggleSortOrder = () => {
+    setSortOrder((prev) => (prev === "newest" ? "oldest" : "newest"));
+  };
 
   // Load posts when screen is focused
   // useFocusEffect runs the callback when screen comes into focus (user navigates back)
@@ -147,8 +170,8 @@ export default function WelcomePage() {
     });
   };
 
-  // Map posts to lesson card format
-  const lessons = posts.map((post) => ({
+  // Map posts to lesson card format (using sorted posts)
+  const lessons = getSortedPosts().map((post) => ({
     id: post.id,
     date: post.date,
     title: post.title,
@@ -262,8 +285,19 @@ export default function WelcomePage() {
         <View className="px-5 mt-8 mb-6">
           <View className="flex-row items-center justify-between mb-4">
             <Text className="text-xl font-bold text-gray-900">All Lessons</Text>
-            <TouchableOpacity>
-              <Ionicons name="menu" size={24} color="#111827" />
+            <TouchableOpacity
+              onPress={toggleSortOrder}
+              className="flex-row items-center gap-2 bg-gray-100 px-3 py-2 rounded-lg"
+              activeOpacity={0.7}
+            >
+              <Text className="text-sm text-gray-700 font-medium">
+                {sortOrder === "newest" ? "Newest" : "Oldest"}
+              </Text>
+              <Ionicons
+                name={sortOrder === "newest" ? "arrow-down" : "arrow-up"}
+                size={16}
+                color="#374151"
+              />
             </TouchableOpacity>
           </View>
 
