@@ -243,42 +243,20 @@ export default function WelcomePage() {
             </View>
           </View>
 
-          {/* Latest Learnings Card */}
-          <View className="flex-1 bg-gray-50 rounded-xl p-4">
-            <Text className="text-base font-semibold text-gray-900 mb-3">
-              Latest Learnings
+          {/* Calendar Button */}
+          <TouchableOpacity
+            className="flex-1 bg-blue-500 rounded-xl p-4 items-center justify-center"
+            activeOpacity={0.7}
+            onPress={() => router.push("/(tabs)/calendar")}
+          >
+            <Ionicons name="calendar-outline" size={32} color="white" />
+            <Text className="text-white text-base font-semibold mt-2">
+              View Calendar
             </Text>
-            {latestPost ? (
-              <>
-                <Text className="text-xs text-gray-600 mb-3">
-                  {latestPost.date}
-                </Text>
-                <View className="gap-1">
-                  {latestPost.topics.flatMap((topic) => topic.lessons).length >
-                  0 ? (
-                    latestPost.topics
-                      .flatMap((topic) => topic.lessons)
-                      .map((lesson, idx) => (
-                        <Text key={idx} className="text-xs text-gray-700">
-                          • {lesson}
-                        </Text>
-                      ))
-                  ) : (
-                    <Text className="text-xs text-gray-500">
-                      No lessons added
-                    </Text>
-                  )}
-                </View>
-              </>
-            ) : (
-              <>
-                <Text className="text-xs text-gray-400 mb-3">No posts yet</Text>
-                <Text className="text-xs text-gray-400">
-                  Create your first post to see it here
-                </Text>
-              </>
-            )}
-          </View>
+            <Text className="text-white text-xs mt-1 opacity-80">
+              Track your daily learnings
+            </Text>
+          </TouchableOpacity>
         </View>
 
         {/* All Lessons Section */}
